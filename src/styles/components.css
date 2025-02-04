@@ -228,6 +228,12 @@
     color: var(--color-text-secondary);
 }
 
+.filter-group input {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
 /* Search Button */
 .search-button {
     width: 100%;
