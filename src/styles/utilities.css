@@ -1,0 +1,100 @@
+/* Loading States */
+.loading {
+    font-weight: 600;
+    color: var(--color-primary);
+    text-align: center;
+    padding: 30px;
+    font-size: 1.1em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.progress-bar {
+    width: 240px;
+    height: 6px;
+    background: var(--color-primary-bg);
+    border-radius: 3px;
+    margin: 15px auto;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar-fill {
+    width: 0;
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    animation: progress 2s infinite;
+    box-shadow: 0 1px 2px var(--color-primary-shadow);
+}
+
+@keyframes progress {
+    0% {
+        width: 0;
+        opacity: 0.8;
+    }
+
+    50% {
+        width: 70%;
+        opacity: 1;
+    }
+
+    100% {
+        width: 100%;
+        opacity: 0.8;
+    }
+}
+
+/* Results Feedback */
+.loading,
+.no-results,
+.results-summary {
+    text-align: center;
+    grid-column: 1 / -1;
+    padding: 30px;
+    color: var(--color-text-secondary);
+    background: var(--color-bg-white);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+}
+
+.results-summary {
+    font-size: 1.2em;
+    /* margin-bottom: 30px; */
+    border-bottom: 2px solid var(--color-border);
+    padding: 20px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    background: var(--color-bg-secondary);
+    border-radius: 12px 12px 0 0;
+}
+
+.no-results {
+    font-size: 1.1em;
+    color: var(--color-text-secondary);
+    padding: 60px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.no-results .material-symbols-rounded {
+    font-size: 48px;
+    color: var(--color-text-tertiary);
+    margin-bottom: 10px;
+}
+
+.no-results h2 {
+    font-size: 1.4em;
+    color: var(--color-text-primary);
+    margin: 0;
+}
+
+.no-results p {
+    color: var(--color-text-secondary);
+    max-width: 300px;
+    text-align: center;
+}

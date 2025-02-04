@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pick Anime Cool | Better Bangumi Search</title>
+    <meta name="description"
+        content="Search and discover anime with advanced filters for ratings, air dates, and rankings.">
+    <link rel="stylesheet" href="src/styles/main.css">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
+</head>
+
+<body>
+    <div class="container">
+        <h1>
+            <span class="material-symbols-rounded" aria-hidden="true">check_circle</span>
+            Pick Anime Cool
+        </h1>
+        <div class="search-container">
+            <div class="search-group">
+                <div class="input-wrapper">
+                    <span class="material-symbols-rounded" aria-hidden="true">search</span>
+                    <input type="text" id="keyword" placeholder="Search anime..." class="search-input"
+                        aria-label="Search for anime">
+                </div>
+                <div class="tag-container" id="tagContainer" role="list" aria-label="Selected tags"></div>
+                <div class="input-wrapper">
+                    <span class="material-symbols-rounded" aria-hidden="true">label</span>
+                    <input type="text" id="tagInput" placeholder="Add tags (press Enter)" class="tag-input"
+                        aria-label="Add tags">
+                </div>
+            </div>
+            <div class="filter-group">
+                <div class="rating-filter">
+                    <label for="minRating">Rating</label>
+                    <div class="filter-inputs">
+                        <input type="number" id="minRating" placeholder="Min" min="0" max="10" step="0.1"
+                            aria-label="Minimum rating">
+                        <span class="separator">-</span>
+                        <input type="number" id="maxRating" placeholder="Max" min="0" max="10" step="0.1"
+                            aria-label="Maximum rating">
+                    </div>
+                </div>
+                <div class="date-filter">
+                    <label for="startDate">Air Date</label>
+                    <div class="filter-inputs">
+                        <input type="date" id="startDate" aria-label="Start date">
+                        <span class="separator">-</span>
+                        <input type="date" id="endDate" aria-label="End date">
+                    </div>
+                </div>
+                <div class="rank-filter">
+                    <label for="minRank">Rank</label>
+                    <div class="filter-inputs">
+                        <input type="number" id="minRank" placeholder="Min" aria-label="Minimum rank">
+                        <span class="separator">-</span>
+                        <input type="number" id="maxRank" placeholder="Max" aria-label="Maximum rank">
+                    </div>
+                </div>
+            </div>
+            <button id="searchBtn" class="search-button">
+                <span class="material-symbols-rounded" aria-hidden="true">search</span>
+                Pick Anime
+            </button>
+        </div>
+        <div id="results" class="results-container" role="region" aria-live="polite"></div>
+    </div>
+    <script src="src/js/animeSearch.js"></script>
+
+    <!-- Navigation Buttons -->
+    <button class="float-btn float-btn-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+        aria-label="Scroll to top">
+        <span class="material-symbols-rounded">expand_less</span>
+    </button>
+    <button class="float-btn float-btn-bottom"
+        onclick="window.scrollTo({top: document.documentElement.scrollHeight, behavior: 'smooth'})"
+        aria-label="Scroll to bottom">
+        <span class="material-symbols-rounded">expand_more</span>
+    </button>
+</body>
+
+</html>
