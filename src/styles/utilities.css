@@ -49,26 +49,15 @@
 
 /* Results Feedback */
 .loading,
-.no-results,
-.results-summary {
+.no-results {
     text-align: center;
     grid-column: 1 / -1;
-    padding: 30px;
+    padding: 20px 25px;
     color: var(--color-text-secondary);
     background: var(--color-white);
     border-radius: 12px;
-    box-shadow: 0 4px 6px var(--shadow-sm);
-}
-
-.results-summary {
-    font-size: 1.2em;
-    /* margin-bottom: 30px; */
-    border-bottom: 2px solid var(--color-border);
-    padding: 20px;
-    font-weight: 600;
-    color: var(--color-text-primary);
-    background: var(--color-primary-bg);
-    border-radius: 12px 12px 0 0;
+    box-shadow: 0 4px 6px var(--shadow-md);
+    border: 1px solid var(--color-border-light);
 }
 
 .no-results {
@@ -95,6 +84,6 @@
 
 .no-results p {
     color: var(--color-text-secondary);
-    max-width: 300px;
+    /* max-width: 300px; */
     text-align: center;
 }

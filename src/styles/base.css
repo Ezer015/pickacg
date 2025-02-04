@@ -84,7 +84,7 @@ body {
 
 h1 {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 12px;
     color: var(--color-text);
     font-size: 2.5em;
     font-weight: 600;
@@ -110,7 +110,9 @@ h1 .material-symbols-rounded {
 }
 
 .inline-icon {
+    width: 80px;
+    height: 80px;
+    vertical-align: middle;
     display: inline-block;
-    margin-right: 45px;
-    transform: scale(4.0);
+    margin-right: 8px;
 }

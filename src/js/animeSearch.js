@@ -93,13 +93,13 @@ class AnimeSearch {
 
     checkScroll() {
         const now = Date.now();
-        if (now - this.state.lastScroll < 250) return;
+        if (now - this.state.lastScroll < 200) return;
         this.state.lastScroll = now;
 
         const { scrollY, innerHeight } = window;
         const { scrollHeight } = document.documentElement;
 
-        if (scrollHeight - (scrollY + innerHeight) <= 200 &&
+        if (scrollHeight - (scrollY + innerHeight) <= 1600 &&
             !this.state.isLoading &&
             this.state.hasMore &&
             this.state.currentSearchData) {
@@ -189,8 +189,43 @@ class AnimeSearch {
             }
 
             if (resetResults) {
+                // Collect common tags
+                const tagCounts = new Map();
+                data.data.forEach(anime => {
+                    if (anime.tags) {
+                        anime.tags.forEach(tag => {
+                            const count = tagCounts.get(tag.name) || 0;
+                            tagCounts.set(tag.name, count + 1);
+                        });
+                    }
+                });
+
+                // Sort tags by frequency and get tops
+                const commonTags = Array.from(tagCounts.entries())
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 30)
+                    .map(([tag]) => tag);
+
                 this.elements.resultsContainer.innerHTML = data.total ?
-                    `<div class="results-summary">Found ${data.total} results</div>` : '';
+                    `<div class="results-summary">
+                        <span style="font-size: 1.1em;">Pick <strong>${data.total}</strong> Anime From</span>
+                        <span class="summary-details">
+                            ${this.state.currentSearchData.keyword ? 
+                                `<span class="keyword-filter">"${this.state.currentSearchData.keyword}"</span>` : ''}
+                        </span>
+                        ${commonTags.length ? 
+                            `<span class="anime-tags">
+                                ${commonTags.map(tag => 
+                                    `<span class="anime-tag" data-tag="${tag}">${tag}</span>`
+                                ).join('')}
+                            </span>` : ''
+                        }
+                    </div>` : '';
+
+                // Add click handlers for common tags
+                this.elements.resultsContainer.querySelectorAll('.anime-tag').forEach(tag => {
+                    tag.addEventListener('click', () => this.addTag(tag.dataset.tag));
+                });
             }
 
             const existingIds = new Set(
