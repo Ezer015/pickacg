@@ -208,18 +208,18 @@ class AnimeSearch {
 
                 this.elements.resultsContainer.innerHTML = data.total ?
                     `<div class="results-summary">
-                        <span style="font-size: 1.1em;">Pick <strong>${data.total}</strong> Anime From</span>
+                        <span class="results-summary-title">Pick <strong>${data.total}</strong> Anime From</span>
                         <span class="summary-details">
-                            ${this.state.currentSearchData.keyword ? 
-                                `<span class="keyword-filter">"${this.state.currentSearchData.keyword}"</span>` : ''}
+                            ${this.state.currentSearchData.keyword ?
+                        `<span class="keyword-filter">"${this.state.currentSearchData.keyword}"</span>` : ''}
                         </span>
-                        ${commonTags.length ? 
-                            `<span class="anime-tags">
-                                ${commonTags.map(tag => 
-                                    `<span class="anime-tag" data-tag="${tag}">${tag}</span>`
-                                ).join('')}
+                        ${commonTags.length ?
+                        `<span class="anime-tags">
+                                ${commonTags.map(tag =>
+                            `<span class="anime-tag" data-tag="${tag}">${tag}</span>`
+                        ).join('')}
                             </span>` : ''
-                        }
+                    }
                     </div>` : '';
 
                 // Add click handlers for common tags
@@ -322,8 +322,23 @@ class AnimeSearch {
         `;
 
         card.appendChild(imgContainer);
+
+        // Add context menu
+        const menuHTML = `
+            <div class="anime-card-menu">
+                <button class="anime-card-menu-btn">
+                    <span class="material-symbols-rounded">more_vert</span>
+                </button>
+                <div class="anime-card-menu-content">
+                    <div class="anime-card-menu-item" data-action="copy-title">Copy Title</div>
+                    <div class="anime-card-menu-item" data-action="copy-subtitle">Copy Subtitle</div>
+                </div>
+            </div>
+        `;
+        card.insertAdjacentHTML('beforeend', menuHTML);
+
         card.innerHTML += `
-            <div class="anime-info">
+            <div class="anime-info" data-title="${anime.name_cn || anime.name}" data-subtitle="${anime.name_cn ? anime.name : ''}">
                 <div class="anime-title">
                     ${anime.name_cn ? `
                         <div class="anime-title-main">${anime.name_cn}</div>
@@ -347,6 +362,44 @@ class AnimeSearch {
                 </div>
             </div>
         `;
+        // Add menu event listeners
+        const menuBtn = card.querySelector('.anime-card-menu-btn');
+        const menuContent = card.querySelector('.anime-card-menu-content');
+
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // Hide other menus
+            document.querySelectorAll('.anime-card-menu-content').forEach(content => {
+                if (content !== menuContent) content.classList.remove('show');
+            });
+            menuContent.classList.toggle('show');
+        });
+
+        // Hide menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!menuContent.contains(e.target) && !menuBtn.contains(e.target)) {
+                menuContent.classList.remove('show');
+            }
+        });
+
+        card.querySelectorAll('.anime-card-menu-item').forEach(item => {
+            item.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                menuContent.classList.remove('show');
+
+                const info = card.querySelector('.anime-info');
+                try {
+                    if (e.target.dataset.action === 'copy-title') {
+                        await navigator.clipboard.writeText(info.dataset.title);
+                    } else if (e.target.dataset.action === 'copy-subtitle' && info.dataset.subtitle) {
+                        await navigator.clipboard.writeText(info.dataset.subtitle);
+                    }
+                } catch (err) {
+                    console.error('Failed to copy text:', err);
+                }
+            });
+        });
+
         card.querySelectorAll('.anime-tag').forEach(tagElement => {
             tagElement.addEventListener('click', (e) => {
                 e.stopPropagation();

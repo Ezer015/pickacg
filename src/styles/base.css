@@ -1,62 +1,62 @@
 :root {
-    /* Light Theme Defaults */
-    --color-primary: #7B6EAD;
-    --color-primary-dark: #4A4377;
-    --color-primary-light: #A599D5;
-    --color-primary-bg: #F0EFFF;
+    /* Light Theme - Silver Wolf Inspired */
+    --color-primary: #8E93B5;
+    --color-primary-dark: #636994;
+    --color-primary-light: #B5BAD6;
+    --color-primary-bg: #F5F6FA;
 
-    --color-bg: #F8F8FF;
+    --color-bg: #F8F9FC;
     --color-white: #FFFFFF;
 
-    --color-text: #2C2851;
-    --color-text-secondary: #5F5C7B;
+    --color-text: #2A2D3E;
+    --color-text-secondary: #666B8C;
 
-    --color-border: #E6E4F0;
-    --color-border-light: #F5F4FF;
+    --color-border: #E6E8F0;
+    --color-border-light: #F0F2F8;
 
-    --shadow-sm: rgba(74, 67, 119, 0.05);
-    --shadow-md: rgba(74, 67, 119, 0.1);
-    --shadow-lg: rgba(74, 67, 119, 0.15);
-    --shadow-primary: rgba(123, 110, 173, 0.1);
-    --shadow-primary-md: rgba(123, 110, 173, 0.2);
-    --shadow-primary-lg: rgba(123, 110, 173, 0.3);
+    --shadow-sm: rgba(74, 77, 119, 0.05);
+    --shadow-md: rgba(74, 77, 119, 0.1);
+    --shadow-lg: rgba(74, 77, 119, 0.15);
+    --shadow-primary: rgba(142, 147, 181, 0.1);
+    --shadow-primary-md: rgba(142, 147, 181, 0.2);
+    --shadow-primary-lg: rgba(142, 147, 181, 0.3);
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --color-bg: #121212;
-        --color-white: #1E1E1E;
-        --color-text: #FAFAFA;
-        --color-text-secondary: #CCD6F6;
-        --color-border: #2D2D2D;
-        --color-border-light: #383838;
+        --color-bg: #13151D;
+        --color-white: #1A1C25;
+        --color-text: #F0F2F8;
+        --color-text-secondary: #B5BAD6;
+        --color-border: #2A2D3E;
+        --color-border-light: #363A4F;
 
-        --color-primary: #B4A7E8;
-        --color-primary-dark: #9D90D9;
-        --color-primary-light: #D1C9F3;
-        --color-primary-bg: #2A2638;
+        --color-primary: #8E93B5;
+        --color-primary-dark: #636994;
+        --color-primary-light: #B5BAD6;
+        --color-primary-bg: #1D1F2B;
     }
 }
 
 [data-theme="dark"] {
-    --color-bg: #121212;
-    --color-white: #1E1E1E;
-    --color-text: #FAFAFA;
-    --color-text-secondary: #CCD6F6;
-    --color-border: #2D2D2D;
-    --color-border-light: #383838;
+    --color-bg: #13151D;
+    --color-white: #1A1C25;
+    --color-text: #F0F2F8;
+    --color-text-secondary: #B5BAD6;
+    --color-border: #2A2D3E;
+    --color-border-light: #363A4F;
 
-    --color-primary: #B4A7E8;
-    --color-primary-dark: #9D90D9;
-    --color-primary-light: #D1C9F3;
-    --color-primary-bg: #2A2638;
+    --color-primary: #8E93B5;
+    --color-primary-dark: #636994;
+    --color-primary-light: #B5BAD6;
+    --color-primary-bg: #1D1F2B;
 
     --shadow-sm: rgba(0, 0, 0, 0.2);
     --shadow-md: rgba(0, 0, 0, 0.3);
     --shadow-lg: rgba(0, 0, 0, 0.4);
-    --shadow-primary: rgba(123, 110, 173, 0.15);
-    --shadow-primary-md: rgba(123, 110, 173, 0.25);
-    --shadow-primary-lg: rgba(123, 110, 173, 0.35);
+    --shadow-primary: rgba(142, 147, 181, 0.15);
+    --shadow-primary-md: rgba(142, 147, 181, 0.25);
+    --shadow-primary-lg: rgba(142, 147, 181, 0.35);
 }
 
 * {
@@ -107,12 +107,4 @@ h1 .material-symbols-rounded {
     h1 {
         font-size: 2em;
     }
-}
-
-.inline-icon {
-    width: 80px;
-    height: 80px;
-    vertical-align: middle;
-    display: inline-block;
-    margin-right: 8px;
 }
