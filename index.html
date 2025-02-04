@@ -17,7 +17,8 @@
     <div class="container">
         <h1>
             <!-- <span class="material-symbols-rounded" aria-hidden="true">check_circle</span> -->
-            <img src="favicon.ico" alt="anime" class="inline-icon" style="width: 24px; height: 24px; vertical-align: middle;">
+            <img src="favicon.ico" alt="anime" class="inline-icon"
+                style="width: 24px; height: 24px; vertical-align: middle;">
             Pick Anime Cool
         </h1>
         <div class="search-container">
@@ -41,11 +42,11 @@
                         <button class="segmented-button active" data-sort="rank" aria-pressed="true">
                             <span class="material-symbols-rounded">sort</span>Rank
                         </button>
-                        <button class="segmented-button" data-sort="score" aria-pressed="false">
-                            <span class="material-symbols-rounded">star</span>Score
-                        </button>
                         <button class="segmented-button" data-sort="heat" aria-pressed="false">
                             <span class="material-symbols-rounded">local_fire_department</span>Heat
+                        </button>
+                        <button class="segmented-button" data-sort="score" aria-pressed="false">
+                            <span class="material-symbols-rounded">star</span>Score
                         </button>
                     </div>
                 </div>
@@ -84,6 +85,11 @@
         <div id="results" class="results-container" role="region" aria-live="polite"></div>
     </div>
     <script src="src/js/animeSearch.js"></script>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <span class="material-symbols-rounded">dark_mode</span>
+    </button>
 
     <!-- Navigation Buttons -->
     <button class="float-btn float-btn-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})"

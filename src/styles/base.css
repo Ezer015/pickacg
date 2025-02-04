@@ -1,29 +1,62 @@
 :root {
-    /* Primary Colors - Based on Stelle's Theme */
+    /* Light Theme Defaults */
     --color-primary: #7B6EAD;
     --color-primary-dark: #4A4377;
     --color-primary-light: #A599D5;
     --color-primary-bg: #F0EFFF;
 
-    /* Background Colors */
     --color-bg: #F8F8FF;
     --color-white: #FFFFFF;
 
-    /* Text Colors */
     --color-text: #2C2851;
     --color-text-secondary: #5F5C7B;
 
-    /* Border Colors */
     --color-border: #E6E4F0;
     --color-border-light: #F5F4FF;
 
-    /* Shadows */
     --shadow-sm: rgba(74, 67, 119, 0.05);
     --shadow-md: rgba(74, 67, 119, 0.1);
     --shadow-lg: rgba(74, 67, 119, 0.15);
     --shadow-primary: rgba(123, 110, 173, 0.1);
     --shadow-primary-md: rgba(123, 110, 173, 0.2);
     --shadow-primary-lg: rgba(123, 110, 173, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-bg: #121212;
+        --color-white: #1E1E1E;
+        --color-text: #FAFAFA;
+        --color-text-secondary: #CCD6F6;
+        --color-border: #2D2D2D;
+        --color-border-light: #383838;
+
+        --color-primary: #B4A7E8;
+        --color-primary-dark: #9D90D9;
+        --color-primary-light: #D1C9F3;
+        --color-primary-bg: #2A2638;
+    }
+}
+
+[data-theme="dark"] {
+    --color-bg: #121212;
+    --color-white: #1E1E1E;
+    --color-text: #FAFAFA;
+    --color-text-secondary: #CCD6F6;
+    --color-border: #2D2D2D;
+    --color-border-light: #383838;
+
+    --color-primary: #B4A7E8;
+    --color-primary-dark: #9D90D9;
+    --color-primary-light: #D1C9F3;
+    --color-primary-bg: #2A2638;
+
+    --shadow-sm: rgba(0, 0, 0, 0.2);
+    --shadow-md: rgba(0, 0, 0, 0.3);
+    --shadow-lg: rgba(0, 0, 0, 0.4);
+    --shadow-primary: rgba(123, 110, 173, 0.15);
+    --shadow-primary-md: rgba(123, 110, 173, 0.25);
+    --shadow-primary-lg: rgba(123, 110, 173, 0.35);
 }
 
 * {

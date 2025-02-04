@@ -22,10 +22,30 @@ class AnimeSearch {
             endDate: document.getElementById('endDate'),
             minRank: document.getElementById('minRank'),
             maxRank: document.getElementById('maxRank'),
-            sortButtons: document.querySelectorAll('.segmented-button')
+            sortButtons: document.querySelectorAll('.segmented-button'),
+            themeToggle: document.getElementById('themeToggle')
         };
 
+        this.initializeTheme();
         this.setupEventListeners();
+    }
+
+    initializeTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        this.elements.themeToggle.querySelector('.material-symbols-rounded').textContent =
+            savedTheme === 'dark' ? 'dark_mode' : 'light_mode';
+    }
+
+    toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+
+        this.elements.themeToggle.querySelector('.material-symbols-rounded').textContent =
+            newTheme === 'dark' ? 'dark_mode' : 'light_mode';
     }
 
     setupEventListeners() {
@@ -54,6 +74,8 @@ class AnimeSearch {
                 this.resetSearch();
             });
         });
+
+        this.elements.themeToggle.addEventListener('click', () => this.toggleTheme());
 
         this.debounce = (fn, delay) => {
             let timeoutId;
@@ -102,7 +124,7 @@ class AnimeSearch {
 
         const { minRating, maxRating, minRank, maxRank, startDate, endDate } = this.elements;
         addFilter('rating', minRating, maxRating);
-        
+
         // If sort is rank and no min rank is set, default to 0 to show ranked items first
         if (document.querySelector('.segmented-button.active').dataset.sort === 'rank' && !minRank.value) {
             filter.rank = ['>0'];
@@ -110,7 +132,7 @@ class AnimeSearch {
         } else {
             addFilter('rank', minRank, maxRank);
         }
-        
+
         addFilter('air_date', startDate, endDate);
 
         return {
@@ -240,17 +262,26 @@ class AnimeSearch {
         imgContainer.className = 'anime-image-container';
 
         const rank = anime.rating?.rank ? `<div class="anime-rank">#${anime.rating.rank}</div>` : '';
-        const rating = anime.rating?.score ? 
+        const rating = anime.rating?.score ?
             `<div class="anime-rating-badge">${Number.isInteger(anime.rating.score) ? anime.rating.score + '.0' : anime.rating.score}</div>` : '';
 
         imgContainer.innerHTML = `
-            <img 
-                src="${imageUrl || '#'}" 
-                alt="${anime.name}"
-                class="anime-image${!imageUrl ? ' no-image' : ''}"
-                onerror="this.classList.add('no-image'); this.src='#';"
-            >
-            ${!imageUrl ? '<span class="material-symbols-rounded placeholder-icon">image_not_supported</span>' : ''}
+            ${imageUrl ? `
+                <img 
+                    src="${imageUrl}" 
+                    alt="${anime.name}"
+                    class="anime-image"
+                    onerror="this.classList.add('no-image'); this.parentElement.querySelector('.placeholder-icon').style.display = 'block';"
+                >
+            ` : `
+                <img 
+                    src="#" 
+                    alt="${anime.name}"
+                    class="anime-image no-image"
+                    hidden
+                >
+            `}
+            <span class="material-symbols-rounded placeholder-icon" style="display: ${!imageUrl ? 'block' : 'none'}">image_not_supported</span>
             ${rank}
             ${rating}
         `;
