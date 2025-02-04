@@ -21,7 +21,8 @@ class AnimeSearch {
             startDate: document.getElementById('startDate'),
             endDate: document.getElementById('endDate'),
             minRank: document.getElementById('minRank'),
-            maxRank: document.getElementById('maxRank')
+            maxRank: document.getElementById('maxRank'),
+            sortButtons: document.querySelectorAll('.segmented-button')
         };
 
         this.setupEventListeners();
@@ -40,6 +41,18 @@ class AnimeSearch {
             if (e.target.classList.contains('tag-remove')) {
                 this.removeTag(e.target.dataset.tag);
             }
+        });
+
+        this.elements.sortButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                this.elements.sortButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.setAttribute('aria-pressed', 'false');
+                });
+                button.classList.add('active');
+                button.setAttribute('aria-pressed', 'true');
+                this.resetSearch();
+            });
         });
 
         this.debounce = (fn, delay) => {
@@ -89,12 +102,20 @@ class AnimeSearch {
 
         const { minRating, maxRating, minRank, maxRank, startDate, endDate } = this.elements;
         addFilter('rating', minRating, maxRating);
-        addFilter('rank', minRank, maxRank);
+        
+        // If sort is rank and no min rank is set, default to 0 to show ranked items first
+        if (document.querySelector('.segmented-button.active').dataset.sort === 'rank' && !minRank.value) {
+            filter.rank = ['>0'];
+            if (maxRank.value) filter.rank.push(`<=${maxRank.value}`);
+        } else {
+            addFilter('rank', minRank, maxRank);
+        }
+        
         addFilter('air_date', startDate, endDate);
 
         return {
             keyword: this.elements.keyword.value.trim(),
-            sort: "rank",
+            sort: document.querySelector('.segmented-button.active').dataset.sort,
             filter
         };
     }
