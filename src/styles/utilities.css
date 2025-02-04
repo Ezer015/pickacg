@@ -23,7 +23,7 @@
 .progress-bar-fill {
     width: 0;
     height: 100%;
-    background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
+    background: linear-gradient(90deg, var(--color-primary-dark), var(--color-primary));
     border-radius: 3px;
     transition: width 0.3s ease;
     animation: progress 2s infinite;
@@ -55,9 +55,9 @@
     grid-column: 1 / -1;
     padding: 30px;
     color: var(--color-text-secondary);
-    background: var(--color-bg-white);
+    background: var(--color-white);
     border-radius: 12px;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 4px 6px var(--shadow-sm);
 }
 
 .results-summary {
@@ -67,7 +67,7 @@
     padding: 20px;
     font-weight: 600;
     color: var(--color-text-primary);
-    background: var(--color-bg-secondary);
+    background: var(--color-primary-bg);
     border-radius: 12px 12px 0 0;
 }
 

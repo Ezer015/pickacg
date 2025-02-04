@@ -1,29 +1,29 @@
 :root {
-    /* Primary Colors */
-    --color-primary: #E57373;
-    --color-primary-dark: #D32F2F;
-    --color-primary-light: #F09199;
-    --color-primary-bg: #FFF0F0;
+    /* Primary Colors - Based on Stelle's Theme */
+    --color-primary: #7B6EAD;
+    --color-primary-dark: #4A4377;
+    --color-primary-light: #A599D5;
+    --color-primary-bg: #F0EFFF;
 
     /* Background Colors */
-    --color-bg: #F6F6F6;
+    --color-bg: #F8F8FF;
     --color-white: #FFFFFF;
 
     /* Text Colors */
-    --color-text: #444444;
-    --color-text-secondary: #666666;
+    --color-text: #2C2851;
+    --color-text-secondary: #5F5C7B;
 
     /* Border Colors */
-    --color-border: #EEEEEE;
-    --color-border-light: #F5F5F5;
+    --color-border: #E6E4F0;
+    --color-border-light: #F5F4FF;
 
     /* Shadows */
-    --shadow-sm: rgba(0, 0, 0, 0.05);
-    --shadow-md: rgba(0, 0, 0, 0.1);
-    --shadow-lg: rgba(0, 0, 0, 0.15);
-    --shadow-primary: rgba(240, 145, 153, 0.1);
-    --shadow-primary-md: rgba(240, 145, 153, 0.2);
-    --shadow-primary-lg: rgba(240, 145, 153, 0.3);
+    --shadow-sm: rgba(74, 67, 119, 0.05);
+    --shadow-md: rgba(74, 67, 119, 0.1);
+    --shadow-lg: rgba(74, 67, 119, 0.15);
+    --shadow-primary: rgba(123, 110, 173, 0.1);
+    --shadow-primary-md: rgba(123, 110, 173, 0.2);
+    --shadow-primary-lg: rgba(123, 110, 173, 0.3);
 }
 
 * {
@@ -74,4 +74,10 @@ h1 .material-symbols-rounded {
     h1 {
         font-size: 2em;
     }
+}
+
+.inline-icon {
+    display: inline-block;
+    margin-right: 45px;
+    transform: scale(4.0);
 }

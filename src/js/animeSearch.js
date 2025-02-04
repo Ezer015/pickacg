@@ -219,7 +219,8 @@ class AnimeSearch {
         imgContainer.className = 'anime-image-container';
 
         const rank = anime.rating?.rank ? `<div class="anime-rank">#${anime.rating.rank}</div>` : '';
-        const rating = anime.rating?.score ? `<div class="anime-rating-badge">${anime.rating.score}</div>` : '';
+        const rating = anime.rating?.score ? 
+            `<div class="anime-rating-badge">${Number.isInteger(anime.rating.score) ? anime.rating.score + '.0' : anime.rating.score}</div>` : '';
 
         imgContainer.innerHTML = `
             <img 
