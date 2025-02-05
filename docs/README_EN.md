@@ -4,9 +4,9 @@
 
 # Pick Anime Cool
 
-> A powerful multi-tag anime search interface powered by Bangumi API
+  A powerful multi-tag anime search interface powered by Bangumi API
 
-[中文](../README.md) | **English**
+[简体中文](../README.md) | **English**
 
 [![Live Demo](https://img.shields.io/badge/Try%20It-Live%20Demo-4285f4?style=for-the-badge&logo=github)](https://ezer015.github.io/pick-anime-cool/)
 [![License](https://img.shields.io/badge/License-AGPL--3.0-43a047?style=for-the-badge&logo=gnu)](../LICENSE)

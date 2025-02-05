@@ -4,9 +4,9 @@
 
 # Pick Anime Cool
 
-> 基于 Bangumi API 开发的高效动画作品检索与发现平台
+  基于 Bangumi API 开发的高效多标签番剧搜索界面
 
-**中文** | [English](./docs/README_EN.md)
+**简体中文** | [English](./docs/README_EN.md)
 
 [![在线演示](https://img.shields.io/badge/Try%20It-Live%20Demo-4285f4?style=for-the-badge&logo=github)](https://ezer015.github.io/pick-anime-cool/)
 [![许可证](https://img.shields.io/badge/License-AGPL--3.0-43a047?style=for-the-badge&logo=gnu)](./LICENSE)
