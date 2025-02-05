@@ -100,7 +100,7 @@ src/
 
 ## 📄 许可证
 
-本项目采用 GNU Affero 通用公共许可证 v3.0 - 详见 [LICENSE](./LICENSE) 文件。
+本项目基于 [GNU AGPL v3.0](./LICENSE) 开源许可证发布。
 
 ## 🙏 致谢
 

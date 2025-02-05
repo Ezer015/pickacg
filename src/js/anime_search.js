@@ -280,13 +280,14 @@ class AnimeSearch {
     }
 
     createAnimeCard(anime) {
-        const card = document.createElement('div');
+        const card = document.createElement('a');
         card.className = 'anime-card';
         card.dataset.id = anime.id;
         card.style.cursor = 'pointer';
-        card.addEventListener('click', () => {
-            window.open(`https://bgm.tv/subject/${anime.id}`, '_blank');
-        });
+
+        card.href = `https://bgm.tv/subject/${anime.id}`;
+        card.target = '_blank';
+        card.style.textDecoration = 'none';
 
         const sortedTags = anime.tags ? anime.tags
             .sort((a, b) => b.count - a.count)
@@ -331,7 +332,7 @@ class AnimeSearch {
                 </button>
                 <div class="anime-card-menu-content">
                     <div class="anime-card-menu-item" data-action="copy-title">Copy Title</div>
-                    <div class="anime-card-menu-item" data-action="copy-subtitle">Copy Subtitle</div>
+                    ${anime.name_cn ? `<div class="anime-card-menu-item" data-action="copy-subtitle">Copy Subtitle</div>` : ''}
                 </div>
             </div>
         `;
@@ -367,6 +368,7 @@ class AnimeSearch {
         const menuContent = card.querySelector('.anime-card-menu-content');
 
         menuBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             e.stopPropagation();
             // Hide other menus
             document.querySelectorAll('.anime-card-menu-content').forEach(content => {
@@ -384,6 +386,7 @@ class AnimeSearch {
 
         card.querySelectorAll('.anime-card-menu-item').forEach(item => {
             item.addEventListener('click', async (e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 menuContent.classList.remove('show');
 
@@ -402,6 +405,7 @@ class AnimeSearch {
 
         card.querySelectorAll('.anime-tag').forEach(tagElement => {
             tagElement.addEventListener('click', (e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 this.addTag(e.currentTarget.dataset.tag);
             });
