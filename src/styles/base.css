@@ -99,12 +99,25 @@ h1 .material-symbols-rounded {
     color: var(--color-primary);
 }
 
+.inline-icon {
+    width: 80px;
+    height: 80px;
+    vertical-align: middle;
+    display: inline-block;
+    margin-right: 8px;
+}
+
 @media (max-width: 768px) {
     .container {
         padding: 15px;
     }
 
     h1 {
-        font-size: 2em;
+        font-size: 1.6em;
+    }
+
+    .inline-icon {
+        width: 60px;
+        height: 60px;
     }
 }

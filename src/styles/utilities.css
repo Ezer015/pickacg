@@ -87,11 +87,3 @@
     /* max-width: 300px; */
     text-align: center;
 }
-
-.inline-icon {
-    width: 80px;
-    height: 80px;
-    vertical-align: middle;
-    display: inline-block;
-    margin-right: 8px;
-}
