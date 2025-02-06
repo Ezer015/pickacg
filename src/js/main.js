@@ -233,15 +233,28 @@ class AnimeSearch {
         if (resetResults) {
             this.elements.resultsContainer.innerHTML = `
                 <div class="loading">
-                    Loading results...
                     <div class="progress-bar">
                         <div class="progress-bar-fill"></div>
                     </div>
+                    Loading...
                 </div>`;
             this.state.currentSearchData = this.createSearchData();
         }
 
         try {
+            // Add loading indicator if loading more results
+            if (!resetResults) {
+                const loadingDiv = document.createElement('div');
+                loadingDiv.className = 'loading';
+                loadingDiv.innerHTML = `
+                    <div class="progress-bar">
+                        <div class="progress-bar-fill"></div>
+                    </div>
+                    Loading...
+                `;
+                this.elements.resultsContainer.appendChild(loadingDiv);
+            }
+
             const url = new URL('https://api.bgm.tv/v0/search/subjects');
             url.searchParams.set('limit', this.state.limit);
             url.searchParams.set('offset', this.state.offset);
@@ -321,18 +334,6 @@ class AnimeSearch {
             this.state.offset += data.data.length;
             this.state.hasMore = this.state.offset < data.total;
 
-            if (this.state.hasMore) {
-                const loadingDiv = document.createElement('div');
-                loadingDiv.className = 'loading';
-                loadingDiv.innerHTML = `
-                    Loading more results...
-                    <div class="progress-bar">
-                        <div class="progress-bar-fill"></div>
-                    </div>
-                `;
-                this.elements.resultsContainer.appendChild(loadingDiv);
-            }
-
         } catch (error) {
             console.error('Search error:', error);
             if (resetResults) {
@@ -341,9 +342,11 @@ class AnimeSearch {
             }
             throw error;
         } finally {
-            this.state.isLoading = false;
             const loadingIndicator = this.elements.resultsContainer.querySelector('.loading');
-            if (loadingIndicator) loadingIndicator.remove();
+            if (loadingIndicator) {
+                loadingIndicator.remove();
+            }
+            this.state.isLoading = false;
         }
     }
 

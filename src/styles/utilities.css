@@ -11,7 +11,7 @@
 }
 
 .progress-bar {
-    width: 240px;
+    width: 60%;
     height: 6px;
     background: var(--color-primary-bg);
     border-radius: 3px;
@@ -26,7 +26,7 @@
     background: linear-gradient(90deg, var(--color-primary-dark), var(--color-primary));
     border-radius: 3px;
     transition: width 0.3s ease;
-    animation: progress 2s infinite;
+    animation: progress 1.5s infinite;
     box-shadow: 0 1px 2px var(--color-primary-shadow);
 }
 
@@ -52,7 +52,8 @@
 .no-results {
     text-align: center;
     grid-column: 1 / -1;
-    padding: 20px 25px;
+    padding: 0px 25px;
+    padding-bottom: 10px;
     color: var(--color-text-secondary);
     background: var(--color-white);
     border-radius: 12px;

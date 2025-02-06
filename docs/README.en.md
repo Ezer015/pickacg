@@ -75,12 +75,12 @@ open http://localhost:8000
 ```
 src/
 ├── js/
-│   └── anime_search.js    # Core search functionality
+│   └── main.js         # Core search functionality
 └── styles/
-    ├── base.css          # Base styles and reset
-    ├── components.css    # UI components
-    ├── main.css         # Main application styles
-    └── utilities.css    # Utility classes
+    ├── base.css        # Base styles and reset
+    ├── components.css  # UI components
+    ├── main.css        # Main application styles
+    └── utilities.css   # Utility classes
 ```
 
 ### Tech Stack

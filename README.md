@@ -75,12 +75,12 @@ open http://localhost:8000
 ```
 src/
 ├── js/
-│   └── anime_search.js    # 核心搜索功能
+│   └── main.js         # 核心搜索功能
 └── styles/
-    ├── base.css          # 基础样式和重置
-    ├── components.css    # UI组件
-    ├── main.css         # 主应用样式
-    └── utilities.css    # 实用工具类
+    ├── base.css        # 基础样式和重置
+    ├── components.css  # UI组件
+    ├── main.css        # 主应用样式
+    └── utilities.css   # 实用工具类
 ```
 
 ### 技术栈
