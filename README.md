@@ -6,7 +6,7 @@
 
   基于 Bangumi API 开发的高效多标签番剧搜索界面
 
-**简体中文** | [English](./docs/README_EN.md)
+**简体中文** | [English](./docs/README.en.md)
 
 [![在线演示](https://img.shields.io/badge/Try%20It-Live%20Demo-4285f4?style=for-the-badge&logo=github)](https://ezer015.github.io/pick-anime-cool/)
 [![许可证](https://img.shields.io/badge/License-AGPL--3.0-43a047?style=for-the-badge&logo=gnu)](./LICENSE)
@@ -32,6 +32,7 @@
 - 放送日期筛选
 - 基于排名的筛选
 - 按排名、人气或评分排序
+- 内容类型选择（动画、书籍、音乐、游戏、三次元）
 
 ### 🎨 用户体验
 
@@ -46,9 +47,10 @@
 ### 在线使用
 
 1. 立即体验：[在线演示](https://ezer015.github.io/pick-anime-cool/)
-2. 输入关键词搜索动画（或留空显示全部）
-3. 点击推荐标签或动画卡片上的标签
-4. 使用筛选器调整搜索结果
+2. 选择内容类型
+3. 输入关键词搜索（或留空显示全部）
+4. 点击推荐标签或动画卡片上的标签
+5. 使用筛选器调整搜索结果
 
 ### 本地开发
 

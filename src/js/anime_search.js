@@ -11,7 +11,6 @@ class AnimeSearch {
         };
 
         this.elements = {
-            tagInput: document.getElementById('tagInput'),
             searchBtn: document.getElementById('searchBtn'),
             tagContainer: document.getElementById('tagContainer'),
             resultsContainer: document.getElementById('results'),
@@ -23,7 +22,8 @@ class AnimeSearch {
             minRank: document.getElementById('minRank'),
             maxRank: document.getElementById('maxRank'),
             sortButtons: document.querySelectorAll('.segmented-button'),
-            themeToggle: document.getElementById('themeToggle')
+            themeToggle: document.getElementById('themeToggle'),
+            contentType: document.getElementById('contentType')
         };
 
         this.initializeTheme();
@@ -49,7 +49,7 @@ class AnimeSearch {
     }
 
     setupEventListeners() {
-        this.elements.tagInput.addEventListener('keypress', e => {
+        this.elements.keyword.addEventListener('keypress', e => {
             if (e.key === 'Enter' && e.target.value.trim()) {
                 this.addTag(e.target.value.trim());
                 e.target.value = '';
@@ -74,6 +74,90 @@ class AnimeSearch {
                 this.resetSearch();
             });
         });
+
+        // Type select functionality
+        const typeSelectWrapper = document.querySelector('.type-select-wrapper');
+        const typeSelect = this.elements.contentType;
+        const typeOptions = typeSelectWrapper.querySelector('.type-select-options');
+        const typeIcon = typeSelectWrapper.querySelector('.type-select-icon');
+
+        // Handle clicking the wrapper to open/close dropdown
+        typeSelectWrapper.addEventListener('click', (e) => {
+            if (e.target.closest('.type-select-options')) return;
+            typeSelectWrapper.classList.toggle('open');
+            e.stopPropagation();
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            typeSelectWrapper.classList.remove('open');
+        });
+
+        // Handle option selection
+        typeOptions.addEventListener('click', (e) => {
+            const option = e.target.closest('.type-select-option');
+            if (!option) return;
+
+            // Remove selection from all options
+            typeOptions.querySelectorAll('.type-select-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+
+            // Add selection to clicked option
+            option.classList.add('selected');
+
+            // Update hidden select and icon
+            typeSelect.value = option.dataset.value;
+            typeIcon.textContent = option.textContent;
+
+            // Close dropdown and trigger search
+            typeSelectWrapper.classList.remove('open');
+            this.resetSearch();
+        });
+
+        // Handle keyboard navigation
+        typeSelectWrapper.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                typeSelectWrapper.classList.toggle('open');
+            } else if (e.key === 'Escape') {
+                typeSelectWrapper.classList.remove('open');
+            } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                const options = Array.from(typeOptions.children);
+                const currentIndex = options.findIndex(opt => opt.classList.contains('selected'));
+                let newIndex = currentIndex;
+
+                if (e.key === 'ArrowDown') {
+                    newIndex = currentIndex < options.length - 1 ? currentIndex + 1 : 0;
+                } else {
+                    newIndex = currentIndex > 0 ? currentIndex - 1 : options.length - 1;
+                }
+
+                // Remove selection from all options
+                options.forEach(opt => opt.classList.remove('selected'));
+
+                // Add selection to new option
+                options[newIndex].classList.add('selected');
+                typeSelect.value = options[newIndex].dataset.value;
+                typeIcon.textContent = options[newIndex].textContent;
+                this.resetSearch();
+            }
+        });
+
+        // Initialize with selected option and ensure UI sync
+        const initSelectedOption = typeOptions.querySelector(`[data-value="${typeSelect.value}"]`);
+        if (initSelectedOption) {
+            // Clear any existing selections
+            typeOptions.querySelectorAll('.type-select-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            // Set current selection
+            typeIcon.textContent = initSelectedOption.textContent;
+            initSelectedOption.classList.add('selected');
+            // Ensure hidden select matches
+            typeSelect.value = initSelectedOption.dataset.value;
+        }
 
         this.elements.themeToggle.addEventListener('click', () => this.toggleTheme());
 
@@ -108,7 +192,7 @@ class AnimeSearch {
     }
 
     createSearchData() {
-        const filter = { type: [2] };
+        const filter = { type: [parseInt(this.elements.contentType.value)] };
 
         if (this.state.tags.size) {
             filter.tag = Array.from(this.state.tags);
@@ -208,10 +292,7 @@ class AnimeSearch {
 
                 this.elements.resultsContainer.innerHTML = data.total ?
                     `<div class="results-summary">
-                        <span class="results-summary-title">Pick <strong>${data.total}</strong> Anime From</span>
-                        <span class="summary-details">
-                            ${this.state.currentSearchData.keyword ?
-                        `<span class="keyword-filter">"${this.state.currentSearchData.keyword}"</span>` : ''}
+                        <span class="results-summary-title">Pick <strong>${data.total}</strong> Results From</span>
                         </span>
                         ${commonTags.length ?
                         `<span class="anime-tags">

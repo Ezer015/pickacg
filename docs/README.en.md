@@ -32,6 +32,7 @@
 - Air date filtering
 - Rank-based filtering
 - Sort by rank, popularity, or rating
+- Content type selection (animation, books, music, games, real-life)
 
 ### 🎨 User Experience
 
@@ -46,9 +47,10 @@
 ### Quick Start
 
 1. Visit: [Live Demo](https://ezer015.github.io/pick-anime-cool/)
-2. Type keywords to search for anime (or leave blank for all)
-3. Click suggested tags or anime card tags
-4. Fine-tune results using filters
+2. Select content type
+3. Type keywords to search (or leave blank for all)
+4. Click suggested tags or anime card tags
+5. Fine-tune results using filters
 
 ### Local Development
 
