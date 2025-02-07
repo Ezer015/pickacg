@@ -602,4 +602,9 @@ class AnimeSearch {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => new AnimeSearch());
+document.addEventListener('DOMContentLoaded', () => {
+    const search = new AnimeSearch();
+    if (window.location.search) {
+        search.resetSearch();
+    }
+});
