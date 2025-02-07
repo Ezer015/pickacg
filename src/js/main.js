@@ -13,6 +13,7 @@ class AnimeSearch {
             lastScroll: Date.now()
         };
 
+        // Initialize elements
         this.elements = {
             searchBtn: document.getElementById('searchBtn'),
             tagContainer: document.getElementById('tagContainer'),
@@ -28,6 +29,41 @@ class AnimeSearch {
             themeToggle: document.getElementById('themeToggle'),
             contentType: document.getElementById('contentType')
         };
+
+        // Set initial values from URL parameters and sync UI
+        const urlType = urlParams.get('type');
+        if (urlType) {
+            this.elements.contentType.value = urlType;
+            const typeSelectWrapper = document.querySelector('.type-select-wrapper');
+            const typeOption = typeSelectWrapper.querySelector(`[data-value="${urlType}"]`);
+            if (typeOption) {
+                const typeIcon = typeSelectWrapper.querySelector('.type-select-icon');
+                typeIcon.textContent = typeOption.textContent;
+                
+                // Update selected option in dropdown
+                typeSelectWrapper.querySelectorAll('.type-select-option').forEach(opt => {
+                    opt.classList.toggle('selected', opt.dataset.value === urlType);
+                });
+            }
+        }
+        if (urlParams.get('minRating')) {
+            this.elements.minRating.value = urlParams.get('minRating');
+        }
+        if (urlParams.get('maxRating')) {
+            this.elements.maxRating.value = urlParams.get('maxRating');
+        }
+        if (urlParams.get('startDate')) {
+            this.elements.startDate.value = urlParams.get('startDate');
+        }
+        if (urlParams.get('endDate')) {
+            this.elements.endDate.value = urlParams.get('endDate');
+        }
+        if (urlParams.get('minRank')) {
+            this.elements.minRank.value = urlParams.get('minRank');
+        }
+        if (urlParams.get('maxRank')) {
+            this.elements.maxRank.value = urlParams.get('maxRank');
+        }
 
         this.initializeTheme();
         this.initializeTags();
@@ -101,12 +137,50 @@ class AnimeSearch {
             params.set('sort', activeSort);
         }
 
+        // Add type if selected
+        const type = this.elements.contentType.value;
+        if (type !== '2') { // Assuming 2 is the default type
+            params.set('type', type);
+        }
+
+        // Add rating range if set
+        if (this.elements.minRating.value) {
+            params.set('minRating', this.elements.minRating.value);
+        }
+        if (this.elements.maxRating.value) {
+            params.set('maxRating', this.elements.maxRating.value);
+        }
+
+        // Add air date range if set
+        if (this.elements.startDate.value) {
+            params.set('startDate', this.elements.startDate.value);
+        }
+        if (this.elements.endDate.value) {
+            params.set('endDate', this.elements.endDate.value);
+        }
+
+        // Add rank range if set
+        if (this.elements.minRank.value) {
+            params.set('minRank', this.elements.minRank.value);
+        }
+        if (this.elements.maxRank.value) {
+            params.set('maxRank', this.elements.maxRank.value);
+        }
+
         // Update URL without reloading the page
         const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
         window.history.pushState({}, '', newUrl);
     }
 
     setupEventListeners() {
+        // Add input event listeners for URL updates
+        ['minRating', 'maxRating', 'startDate', 'endDate', 'minRank', 'maxRank'].forEach(id => {
+            this.elements[id].addEventListener('input', () => {
+                this.updateURL();
+                // this.debouncedResetSearch();
+            });
+        });
+
         this.elements.keyword.addEventListener('keypress', e => {
             if (e.key === 'Enter' && e.target.value.trim()) {
                 const input = e.target.value.trim();
@@ -178,8 +252,9 @@ class AnimeSearch {
             typeSelect.value = option.dataset.value;
             typeIcon.textContent = option.textContent;
 
-            // Close dropdown and trigger search
+            // Close dropdown, update URL and trigger search
             typeSelectWrapper.classList.remove('open');
+            this.updateURL();
             this.resetSearch();
         });
 
@@ -205,10 +280,11 @@ class AnimeSearch {
                 // Remove selection from all options
                 options.forEach(opt => opt.classList.remove('selected'));
 
-                // Add selection to new option
+                // Add selection to new option and update
                 options[newIndex].classList.add('selected');
                 typeSelect.value = options[newIndex].dataset.value;
                 typeIcon.textContent = options[newIndex].textContent;
+                this.updateURL();
                 this.resetSearch();
             }
         });
