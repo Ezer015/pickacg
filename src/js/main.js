@@ -1,7 +1,10 @@
 class AnimeSearch {
     constructor() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlTags = urlParams.get('tags')?.split(',').filter(Boolean) || [];
+
         this.state = {
-            tags: new Set(),
+            tags: new Set(urlTags),
             isLoading: false,
             hasMore: true,
             offset: 0,
@@ -27,6 +30,8 @@ class AnimeSearch {
         };
 
         this.initializeTheme();
+        this.initializeTags();
+        this.initializeSort();
         this.setupEventListeners();
     }
 
@@ -48,10 +53,72 @@ class AnimeSearch {
             newTheme === 'dark' ? 'dark_mode' : 'light_mode';
     }
 
+    initializeTags() {
+        Array.from(this.state.tags).forEach(tag => {
+            const tagElement = document.createElement('div');
+            tagElement.className = 'tag';
+            tagElement.innerHTML = `
+                <span class="tag-text">${tag}</span>
+                <span class="tag-remove" data-tag="${tag}">×</span>
+            `;
+            this.elements.tagContainer.appendChild(tagElement);
+        });
+    }
+
+    initializeSort() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlSort = urlParams.get('sort');
+        if (urlSort) {
+            this.elements.sortButtons.forEach(btn => {
+                if (btn.dataset.sort === urlSort) {
+                    btn.classList.add('active');
+                    btn.setAttribute('aria-pressed', 'true');
+                } else {
+                    btn.classList.remove('active');
+                    btn.setAttribute('aria-pressed', 'false');
+                }
+            });
+        }
+
+        // Update URL if parameters were provided
+        if (window.location.search) {
+            this.updateURL();
+        }
+    }
+
+    updateURL() {
+        const params = new URLSearchParams();
+
+        // Add tags to URL if any exist
+        const tags = Array.from(this.state.tags);
+        if (tags.length > 0) {
+            params.set('tags', tags.join(','));
+        }
+
+        // Add sort to URL if it's not the default
+        const activeSort = document.querySelector('.segmented-button.active')?.dataset.sort;
+        if (activeSort) {
+            params.set('sort', activeSort);
+        }
+
+        // Update URL without reloading the page
+        const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+        window.history.pushState({}, '', newUrl);
+    }
+
     setupEventListeners() {
         this.elements.keyword.addEventListener('keypress', e => {
             if (e.key === 'Enter' && e.target.value.trim()) {
-                this.addTag(e.target.value.trim());
+                const input = e.target.value.trim();
+                if (input.startsWith('Bearer')) {
+                    if (input.length > 'Bearer '.length) {
+                        localStorage.setItem('auth_token', input);
+                    } else {
+                        localStorage.removeItem('auth_token');
+                    }
+                } else {
+                    this.addTag(input);
+                }
                 e.target.value = '';
             }
         });
@@ -71,6 +138,7 @@ class AnimeSearch {
                 });
                 button.classList.add('active');
                 button.setAttribute('aria-pressed', 'true');
+                this.updateURL();
                 this.resetSearch();
             });
         });
@@ -196,6 +264,10 @@ class AnimeSearch {
 
         if (this.state.tags.size) {
             filter.tag = Array.from(this.state.tags);
+            if (filter.tag.some(t => t.toLowerCase() === 'nsfw')) {
+                filter.tag = filter.tag.filter(t => t.toLowerCase() !== 'nsfw');
+                filter.nsfw = true;
+            }
         }
 
         const addFilter = (field, min, max) => {
@@ -259,11 +331,14 @@ class AnimeSearch {
             url.searchParams.set('limit', this.state.limit);
             url.searchParams.set('offset', this.state.offset);
 
+            const authToken = localStorage.getItem('auth_token');
+
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    ...(authToken && { 'Authorization': authToken })
                 },
                 body: JSON.stringify(this.state.currentSearchData)
             });
@@ -514,6 +589,7 @@ class AnimeSearch {
             <span class="tag-remove" data-tag="${tag}">×</span>
         `;
         this.elements.tagContainer.appendChild(tagElement);
+        this.updateURL();
     }
 
     removeTag(tag) {
@@ -522,6 +598,7 @@ class AnimeSearch {
         this.elements.tagContainer.querySelectorAll('.tag').forEach(el => {
             if (el.querySelector('.tag-text').textContent === tag) el.remove();
         });
+        this.updateURL();
     }
 }
 
