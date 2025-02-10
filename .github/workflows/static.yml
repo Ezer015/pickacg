@@ -35,7 +35,14 @@ jobs:
         env:
           GA_ID: ${{ secrets.GA_MEASUREMENT_ID }}
         run: |
-          sed -i '/<head>/a \    <!-- Google tag (gtag.js) -->\n    <script async src="https://www.googletagmanager.com/gtag/js?id='"$GA_ID"'"></script>\n    <script>\n      window.dataLayer = window.dataLayer || [];\n      function gtag(){dataLayer.push(arguments);}\n      gtag('\''js'\'', new Date());\n      gtag('\''config'\'', '\'''"$GA_ID"'\'');\n    </script>' index.html
+          sed -i '/<head>/a\
+              <script async src="https://www.googletagmanager.com/gtag/js?id='"$GA_ID"'"></script>\
+              <script>\
+                  window.dataLayer = window.dataLayer || [];\
+                  function gtag(){dataLayer.push(arguments);}\
+                  gtag("js", new Date());\
+                  gtag("config", "'"$GA_ID"'");\
+              </script>' index.html
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
