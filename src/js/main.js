@@ -64,6 +64,9 @@ class AnimeSearch {
         if (urlParams.get('maxRank')) {
             this.elements.maxRank.value = urlParams.get('maxRank');
         }
+        if (urlParams.get('keyword')) {
+            this.elements.keyword.value = urlParams.get('keyword');
+        }
 
         this.initializeTheme();
         this.initializeTags();
@@ -166,6 +169,9 @@ class AnimeSearch {
         if (this.elements.maxRank.value) {
             params.set('maxRank', this.elements.maxRank.value);
         }
+        
+        // Always include keyword parameter
+        params.set('keyword', this.elements.keyword.value.trim());
 
         // Update URL without reloading the page
         const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
@@ -179,6 +185,11 @@ class AnimeSearch {
                 this.updateURL();
                 // this.debouncedResetSearch();
             });
+        });
+
+        // Add input event listener for keyword field
+        this.elements.keyword.addEventListener('input', () => {
+            this.updateURL();
         });
 
         this.elements.keyword.addEventListener('keypress', e => {
@@ -651,6 +662,7 @@ class AnimeSearch {
     resetSearch() {
         this.state.offset = 0;
         this.state.hasMore = true;
+        this.updateURL();
         this.performSearch(true);
     }
 
