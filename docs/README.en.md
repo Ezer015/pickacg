@@ -28,10 +28,10 @@
 
 ### 📊 Advanced Filtering
 
-- Rating-based filtering
-- Air date filtering
-- Rank-based filtering
-- Sort by rank, popularity, or rating
+- Precise rating filters
+- Flexible air date filtering
+- Smart rank range filtering
+- Multi-dimensional sorting (by match score, popularity, or rank)
 - Content type selection (animation, books, music, games, real-life)
 
 ### 🎨 User Experience
