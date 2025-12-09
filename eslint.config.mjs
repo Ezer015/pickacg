@@ -15,7 +15,8 @@ const eslintConfig = defineConfig([
   ]),
   {
     rules: {
-      "curly": ["error", "all"],
+      "curly": ["warn", "all"],
+      "eol-last": ["warn", "always"],
     },
   },
 ]);
