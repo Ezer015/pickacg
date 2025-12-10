@@ -16,7 +16,6 @@ import {
     ItemHeader,
     ItemSeparator,
 } from "@/components/ui/item"
-
 import {
     Empty,
     EmptyDescription,
@@ -25,6 +24,8 @@ import {
     EmptyTitle,
 } from "@/components/ui/empty"
 import { Skeleton } from "@/components/ui/skeleton"
+
+import { NavigationBar } from "@/components/navigation-bar"
 import { SearchBox } from "@/components/search-box"
 import { AdvancedFilter } from "@/components/advanced-filter"
 import { SubjectCard } from "@/components/subject-card"
@@ -153,35 +154,9 @@ export function HomeContent({ now }: { now: Date }) {
     const reachedEnd = data && data.length && data.at(-1)!.total <= data.at(-1)!.limit + data.at(-1)!.offset;
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-            <main className="flex min-h-screen w-full max-w-7xl flex-col items-center gap-6 py-12 px-6 bg-white dark:bg-black sm:items-start">
-                <header className="grid w-full grid-cols-[1fr_auto_1fr] items-center">
-                    <div /> {/* Placeholder */}
-                    <div className="flex items-center justify-center gap-4">
-                        <Image
-                            className="dark:invert"
-                            src="/pick-anime-cool.svg"
-                            alt="Pick Anime Cool logo"
-                            width={80}
-                            height={80}
-                            priority
-                        />
-                        <h1 className="text-4xl font-extrabold text-center">
-                            Pick Anime Cool
-                        </h1>
-                    </div>
-                    <div className="flex justify-end">
-                        <Button variant="ghost" size="icon-lg" asChild>
-                            <Link
-                                href="https://github.com/Ezer015/pick-anime-cool"
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                <SiGithub className="size-6" aria-hidden="true" />
-                            </Link>
-                        </Button>
-                    </div>
-                </header>
+        <div className="flex min-h-screen items-center justify-center font-sans">
+            <main className="flex min-h-screen w-full max-w-7xl flex-col items-center gap-6 py-6 px-12 sm:items-start">
+                <NavigationBar />
                 <SearchBox isLoading={isLoading} />
                 <AdvancedFilter
                     now={now}
