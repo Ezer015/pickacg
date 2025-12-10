@@ -89,7 +89,7 @@ export function HomeContent({ now }: { now: Date }) {
     })
 
     const getKey = (pageIndex: number, previousPageData: SearchResponse | null) => {
-        if (previousPageData && previousPageData.data.length === 0) { return null; }
+        if (previousPageData && previousPageData.total <= previousPageData.limit + previousPageData.offset) { return null; }
 
         const airDate = filters.withAirDate && filters.airDate === AirDateMode.Range
             ? [
@@ -150,6 +150,8 @@ export function HomeContent({ now }: { now: Date }) {
             .map(([name]) => name);
     }, [firstPage]);
 
+    const reachedEnd = data && data.length && data.at(-1)!.total <= data.at(-1)!.limit + data.at(-1)!.offset;
+
     return (
         <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
             <main className="flex min-h-screen w-full max-w-7xl flex-col items-center gap-6 py-12 px-6 bg-white dark:bg-black sm:items-start">
@@ -190,13 +192,11 @@ export function HomeContent({ now }: { now: Date }) {
                     isLoading={isLoading}
                 />
 
-                <ItemGroup
-                    className={`grid w-full gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4`}
-                >
+                <ItemGroup className="grid w-full gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                     {data?.flatMap((page) =>
                         page.data.map((subject) => (<SubjectCard key={subject.id} subject={subject} />))
                     )}
-                    {(isLoading || (data && size > data.length && data.at(-1)?.data?.length !== 0)) && (
+                    {size > (data?.length ?? 0) && !reachedEnd && (
                         <>{Array.from({ length: pageLimit }).map((_, index) => (
                             <Item key={`skeleton-${index}`} variant="muted">
                                 <ItemHeader>
@@ -223,9 +223,9 @@ export function HomeContent({ now }: { now: Date }) {
                         ))}</>
                     )}
                 </ItemGroup>
-                {data?.at(-1)?.data?.length !== 0 && <div ref={ref} />}
+                {!reachedEnd && size === (data?.length ?? 0) && <div ref={ref} />}
                 <Empty className="w-full">
-                    {!isLoading && data?.at(0)?.data?.length === 0 && (
+                    {reachedEnd && data.at(-1)?.total === 0 && (
                         <EmptyHeader>
                             <EmptyMedia variant="icon">
                                 <SearchSlash />

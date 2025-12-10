@@ -22,6 +22,8 @@ export type Subject = {
 export type SearchResponse = {
     data: Subject[]
     total: number
+    limit: number
+    offset: number
 }
 
 export type SearchPayload = {
