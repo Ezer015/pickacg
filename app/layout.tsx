@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
-import { GoogleAnalytics } from '@next/third-parties/google'
+import { Analytics } from '@vercel/analytics/next';
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
@@ -16,8 +16,6 @@ const geistMono = Geist_Mono({
     subsets: ["latin"],
 });
 
-const gaId = process.env.NEXT_PUBLIC_GA_ID
-
 export const metadata: Metadata = {
     title: "Pick Anime Cool",
     description: "Provide a better bangumi search experience",
@@ -30,7 +28,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" suppressHydrationWarning>
-            <body>
+            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
                 <NuqsAdapter>
                     <ThemeProvider
                         attribute="class"
@@ -42,8 +40,8 @@ export default function RootLayout({
                         <Toaster />
                     </ThemeProvider>
                 </NuqsAdapter>
+                <Analytics />
             </body>
-            {gaId && <GoogleAnalytics gaId={gaId} />}
         </html>
     )
 }
