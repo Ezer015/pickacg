@@ -243,7 +243,7 @@ export function AdvancedFilter({
                         {filters.airDate === AirDateMode.Period && (
                             <>
                                 <Select value={filters.year.toString()} onValueChange={(value) => setFilters({ year: parseInt(value, 10) })} disabled={!filters.withAirDate}>
-                                    <SelectTrigger className="w-20.5 font-medium">
+                                    <SelectTrigger className="w-21.5 font-medium">
                                         <SelectValue placeholder="Year" />
                                     </SelectTrigger>
                                     <SelectContent className="max-h-64 w-[--radix-select-trigger-width] min-w-[--radix-select-trigger-width]">
@@ -254,7 +254,7 @@ export function AdvancedFilter({
                                 </Select>
                                 {category === Category.Anime && (
                                     <Select value={filters.season} onValueChange={(value) => { if (isSeasonValue(value)) { setFilters({ season: value }) } }} disabled={!filters.withAirDate}>
-                                        <SelectTrigger className="w-25.5 font-medium">
+                                        <SelectTrigger className="w-26.5 font-medium">
                                             <SelectValue placeholder="Season" />
                                         </SelectTrigger>
                                         <SelectContent className="w-[--radix-select-trigger-width] min-w-[--radix-select-trigger-width]">

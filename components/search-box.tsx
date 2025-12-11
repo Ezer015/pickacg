@@ -78,7 +78,7 @@ export function SearchBox({
             {...props}
         >
             <Select value={filters.category} onValueChange={(value) => { if (isCategoryValue(value)) { setFilters({ category: value }) } }}>
-                <SelectTrigger className="w-[90px] shrink-0 capitalize font-medium">
+                <SelectTrigger className="w-[91px] shrink-0 capitalize font-medium">
                     <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="w-[--radix-select-trigger-width] min-w-[--radix-select-trigger-width]">

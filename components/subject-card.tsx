@@ -47,7 +47,7 @@ export function SubjectCard({
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Badge variant="secondary" className="absolute right-2 top-2 z-10 rounded-sm text-sm font-bold bg-accent/60 backdrop-blur-xs">
+                                <Badge variant="secondary" className="absolute right-2 top-2 z-10 px-1.5 rounded-sm font-semibold bg-accent/60 backdrop-blur-xs">
                                     {subject.rating.score.toFixed(1)}
                                 </Badge>
                             </TooltipTrigger>
