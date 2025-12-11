@@ -120,4 +120,8 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  :lang(ja) {
+    font-family: var(--font-geist-sans), var(--font-noto-sans-jp), var(--font-noto-sans-sc);
+  }
 }

@@ -79,7 +79,7 @@ export function SubjectCard({
             </ItemHeader>
             <ItemContent className="min-w-0">
                 <div className="flex justify-between gap-2">
-                    <ItemTitle className="text-lg font-bold line-clamp-1">
+                    <ItemTitle className="text-lg font-bold line-clamp-1" lang={subject.name_cn ? "zh" : "jp"}>
                         {subject.name_cn || subject.name}
                     </ItemTitle>
                     <Button
@@ -95,7 +95,7 @@ export function SubjectCard({
                     </Button>
                 </div>
                 <ItemSeparator />
-                <ItemTitle className="text-sm text-muted-foreground line-clamp-1">{subject.name_cn ? subject.name : "Missing Translation..."}</ItemTitle>
+                <ItemTitle className="text-sm text-muted-foreground line-clamp-1" lang={subject.name_cn ? "ja" : "en"}>{subject.name_cn ? subject.name : "Missing Translation..."}</ItemTitle>
                 <ul className="pt-2 flex w-full flex-wrap gap-2 items-center h-30 content-start overflow-hidden">
                     {subject.tags
                         // sort by ratio
