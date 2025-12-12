@@ -1,11 +1,8 @@
 "use client"
 
 import * as React from "react"
-import Image from "next/image"
-import Link from "next/link"
 import useSWRInfinite from "swr/infinite"
 import { SearchSlash, Ban } from "lucide-react"
-import { SiGithub } from "react-icons/si";
 import { useInView } from "react-intersection-observer"
 import { useQueryStates, parseAsArrayOf, parseAsBoolean, parseAsInteger, parseAsIsoDate, parseAsString, parseAsStringEnum } from "nuqs"
 
@@ -29,7 +26,6 @@ import { NavigationBar } from "@/components/navigation-bar"
 import { SearchBox } from "@/components/search-box"
 import { AdvancedFilter } from "@/components/advanced-filter"
 import { SubjectCard } from "@/components/subject-card"
-import { Button } from "@/components/ui/button"
 import { Category, Sort, AirDateMode, Season } from "@/lib/constants"
 import { SearchPayload, SearchResponse } from "@/types/api"
 

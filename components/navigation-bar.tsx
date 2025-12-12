@@ -3,7 +3,6 @@ import Link from "next/link"
 import { SiGithub } from "react-icons/si"
 
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 
 export function NavigationBar({ className, ...props }: React.ComponentProps<'ul'>) {
@@ -24,24 +23,15 @@ export function NavigationBar({ className, ...props }: React.ComponentProps<'ul'
             </li>
             <li /> {/* Placeholder */}
             <li className="contents">
-                <ul className="flex items-center gap-2">
-                    <li className="contents">
-                    </li>
-                    <li className="h-4">
-                        <Separator orientation="vertical" />
-                    </li>
-                    <li className="contents">
-                        <Button variant="ghost" size="icon" asChild>
-                            <Link
-                                href="https://github.com/Ezer015/pick-anime-cool"
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                <SiGithub className="size-5" />
-                            </Link>
-                        </Button>
-                    </li>
-                </ul>
+                <Button variant="ghost" size="icon" asChild>
+                    <Link
+                        href="https://github.com/Ezer015/pick-anime-cool"
+                        target="_blank"
+                        rel="noreferrer"
+                    >
+                        <SiGithub className="size-5" />
+                    </Link>
+                </Button>
             </li>
         </ul>
     )
