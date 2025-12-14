@@ -38,7 +38,7 @@ export function TagArea({
 
     const [inputValue, setInputValue] = React.useState<string>("")
     const [open, setOpen] = React.useState(false)
-    const availableTags = suggestedTags.filter(tag => !tagFilter.tags.includes(tag))
+    const availableTags = suggestedTags.filter((tag) => !tagFilter.tags.includes(tag))
 
     const handleAddTag = (tag: string) => {
         if (!tag) { return false }

@@ -99,9 +99,11 @@ export function HomeContent({ now }: { now: Date }) {
             ? [
                 filters.airDate.from ? `>=${filters.airDate.from}` : null,
                 filters.airDate.to ? `<=${filters.airDate.to}` : null
-            ].filter((val) => val !== null) : [];
+            ].filter((val) => val !== null)
+            : [];
         const rating = filters.rating.enable
-            ? [`>=${filters.rating.min}`, `<=${filters.rating.max}`] : [];
+            ? [`>=${filters.rating.min}`, `<=${filters.rating.max}`]
+            : [];
         const tags = [...new Set([
             ...(filters.airDate.enable && filters.airDate.mode === AirDateMode.Period
                 ? [filters.category === Category.Anime ? `${filters.airDate.year}年${SeasonStart[filters.airDate.season]}月` : filters.airDate.year.toString()]
@@ -144,7 +146,7 @@ export function HomeContent({ now }: { now: Date }) {
 
         return Array.from(
             firstPage.data
-                .flatMap(subject => subject.tags ?? [])
+                .flatMap((subject) => subject.tags ?? [])
                 .reduce((acc, tag) => {
                     acc.set(tag.name, (acc.get(tag.name) || 0) + tag.count);
                     return acc;
@@ -163,7 +165,7 @@ export function HomeContent({ now }: { now: Date }) {
                 <SearchBox isLoading={isLoading} />
                 <AdvancedFilter
                     now={now}
-                    suggestedTags={suggestedTags.filter(tag => tag && !(filters.category === Category.Anime
+                    suggestedTags={suggestedTags.filter((tag) => tag && !(filters.category === Category.Anime
                         ? /^\d{4}年(\d{1,2}月)?$/.test(tag)
                         : /^\d{4}(年)?$/.test(tag)
                     ))}
@@ -172,7 +174,17 @@ export function HomeContent({ now }: { now: Date }) {
 
                 <ItemGroup className="grid w-full gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                     {data?.flatMap((page) =>
-                        page.data.map((subject) => (<SubjectCard key={subject.id} subject={subject} />))
+                        page.data
+                            // exclude mismatches by air date
+                            .filter((subject) => filters.airDate.enable && filters.airDate.mode === AirDateMode.Period
+                                ? (filters.category === Category.Anime
+                                    ? [`${filters.airDate.year}年${SeasonStart[filters.airDate.season]}月`]
+                                    : [filters.airDate.year.toString(), `${filters.airDate.year}年`])
+                                    .includes(subject.tags.find((tag) => filters.category === Category.Anime
+                                        ? /^\d{4}年\d{1,2}月$/.test(tag.name)
+                                        : /^\d{4}(年)?$/.test(tag.name))?.name ?? "")
+                                : subject)
+                            .map((subject) => (<SubjectCard key={subject.id} subject={subject} />))
                     )}
                     {size > (data?.length ?? 0) && !reachedEnd && (
                         <>{Array.from({ length: pageLimit }).map((_, index) => (
