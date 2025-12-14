@@ -4,7 +4,7 @@ import * as React from "react"
 import { useQueryState, parseAsStringLiteral, parseAsJson } from "nuqs"
 import Link from "next/link"
 import Image from "next/image"
-import { Copy, Plus } from "lucide-react"
+import { Copy, Plus, CalendarFold, Clapperboard } from "lucide-react"
 import { toast } from "sonner"
 
 import {
@@ -45,18 +45,6 @@ export function SubjectCard({
     return (
         <Item key={subject.id} variant="muted" className={className} {...props}>
             <ItemHeader className="relative">
-                {subject.rating.score > 0.0 && (
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Badge variant="secondary" className="absolute right-2 top-2 z-10 px-1.5 rounded-sm font-semibold bg-accent/60 backdrop-blur-xs">
-                                    {subject.rating.score.toFixed(1)}
-                                </Badge>
-                            </TooltipTrigger>
-                            <TooltipContent>{subject.rating.total} <span className="font-medium">Votes</span></TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-                )}
                 <figure className="relative aspect-3/4 h-full w-full overflow-hidden rounded-sm">
                     {isLoading && (
                         <Skeleton className="absolute inset-0 h-full w-full z-10" />
@@ -72,11 +60,50 @@ export function SubjectCard({
                             alt={subject.name_cn || subject.name}
                             fill
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            className="rounded-sm object-cover"
+                            className="object-cover"
                             onLoad={() => setIsLoading(false)}
                             unoptimized={true}
                         />
                     </Link>
+                    <ul className="absolute top-2 px-2 w-full flex gap-1 items-start justify-between">
+                        <li>
+                            {subject.rating.rank > 0 && (
+                                <Badge variant="secondary" className="z-10 bg-accent/60 backdrop-blur-xs font-semibold">
+                                    # {subject.rating.rank}
+                                </Badge>
+                            )}
+                        </li>
+                        <li className="contents">
+                            {subject.rating.score > 0.0 && (
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Badge variant="secondary" className="z-10 bg-accent/60 backdrop-blur-xs font-semibold">
+                                                {subject.rating.score.toFixed(1)}
+                                            </Badge>
+                                        </TooltipTrigger>
+                                        <TooltipContent>{subject.rating.total} <span className="font-medium">Votes</span></TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            )}
+                        </li>
+                    </ul>
+                    <ul className="absolute bottom-2 px-2 w-full flex gap-1 items-start justify-between">
+                        <li className="contents">
+                            <Badge variant="secondary" className="bg-accent/60 backdrop-blur-xs font-medium">
+                                <CalendarFold className="mr-0.5" />
+                                {subject.date}
+                            </Badge>
+                        </li>
+                        <li className="contents">
+                            {subject.eps > 0 && (
+                                <Badge variant="secondary" className="bg-accent/60 backdrop-blur-xs font-medium">
+                                    <Clapperboard className="mr-0.5" />
+                                    {subject.eps} eps
+                                </Badge>
+                            )}
+                        </li>
+                    </ul>
                 </figure>
             </ItemHeader>
             <ItemContent className="min-w-0">

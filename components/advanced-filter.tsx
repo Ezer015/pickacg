@@ -192,8 +192,8 @@ export function AdvancedFilter({
                     </ToggleGroup>
                 </li>
 
-                {isOpen && (
-                    <li className="contents">
+                <li className="contents">
+                    {isOpen && (
                         <Button
                             variant="ghost"
                             size="icon"
@@ -202,8 +202,8 @@ export function AdvancedFilter({
                         >
                             <RotateCcw />
                         </Button>
-                    </li>
-                )}
+                    )}
+                </li>
                 <li className="contents">
                     <CollapsibleTrigger asChild>
                         <Button
