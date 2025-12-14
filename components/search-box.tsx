@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useQueryStates, parseAsString, parseAsStringEnum } from 'nuqs';
+import { useQueryStates, parseAsString, parseAsStringLiteral } from 'nuqs';
 import { Search } from "lucide-react"
 
 import {
@@ -65,7 +65,7 @@ export function SearchBox({
     // Sync states with URL query parameters
     const [filters, setFilters] = useQueryStates({
         query: parseAsString.withDefault(''),
-        category: parseAsStringEnum(categoryValues).withDefault(Category.Anime),
+        category: parseAsStringLiteral(categoryValues).withDefault(Category.Anime),
     });
 
     const [queryInput, setQueryInput] = React.useState(filters.query)

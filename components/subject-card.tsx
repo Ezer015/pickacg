@@ -1,9 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { useQueryState, parseAsString, parseAsArrayOf, parseAsBoolean } from "nuqs"
+import { useQueryState, parseAsJson } from "nuqs"
+import Link from "next/link"
 import Image from "next/image"
 import { Copy, Plus } from "lucide-react"
+import { toast } from "sonner"
 
 import {
     Item,
@@ -23,8 +25,7 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 
 import { type Subject } from "@/types/api"
-import Link from "next/link"
-import { toast } from "sonner"
+import { tagSchema } from "@/lib/search-params"
 
 const bangumiUrl = process.env.NEXT_PUBLIC_BANGUMI_URL
 const placeholderUrl = "https://lain.bgm.tv/img/no_icon_subject.png"
@@ -35,8 +36,7 @@ export function SubjectCard({
     ...props
 }: React.ComponentProps<typeof Item> & { subject: Subject }) {
     // Sync states with URL query parameters
-    const [selectedTags, setSelectedTags] = useQueryState('tags', parseAsArrayOf(parseAsString).withDefault([]))
-    const [withTag] = useQueryState('withTag', parseAsBoolean.withDefault(false))
+    const [tagFilter, setTagFilter] = useQueryState('tag', parseAsJson(tagSchema).withDefault({ enable: false, tags: [] }))
 
     const [isLoading, setIsLoading] = React.useState(true);
 
@@ -108,14 +108,14 @@ export function SubjectCard({
                         })
                         .map((tag) => (
                             <li key={tag.name} className="contents">
-                                <Badge variant={withTag && selectedTags.includes(tag.name) ? "default" : "secondary"}>
+                                <Badge variant={tagFilter.enable && tagFilter.tags.includes(tag.name) ? "default" : "secondary"}>
                                     {tag.name}
-                                    {!selectedTags.includes(tag.name) && (
+                                    {!tagFilter.tags.includes(tag.name) && (
                                         <Button
                                             variant="ghost"
                                             size="icon-6xs"
                                             className="rounded-full text-muted-foreground hover:text-foreground"
-                                            onClick={() => setSelectedTags([...selectedTags, tag.name])}
+                                            onClick={() => setTagFilter({ ...tagFilter, tags: [...tagFilter.tags, tag.name] })}
                                         >
                                             <Plus />
                                         </Button>

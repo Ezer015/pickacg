@@ -1,8 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { useQueryState, parseAsString, parseAsArrayOf } from "nuqs"
+import { useQueryState, parseAsJson } from "nuqs"
 import { Plus, X } from "lucide-react"
+import { toast } from "sonner"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -12,7 +13,6 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import { toast } from "sonner"
 import {
     Tooltip,
     TooltipContent,
@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/tooltip"
 import { Kbd } from "@/components/ui/kbd"
 import { cn } from "@/lib/utils"
+
+import { tagSchema } from "@/lib/search-params"
 
 export function TagArea({
     className,
@@ -32,24 +34,24 @@ export function TagArea({
     disabled?: boolean
 }) {
     // Sync states with URL query parameter
-    const [selectedTags, setSelectedTags] = useQueryState('tags', parseAsArrayOf(parseAsString).withDefault([]))
+    const [tagFilter, setTagFilter] = useQueryState('tag', parseAsJson(tagSchema).withDefault({ enable: false, tags: [] }))
 
     const [inputValue, setInputValue] = React.useState<string>("")
     const [open, setOpen] = React.useState(false)
-    const availableTags = suggestedTags.filter(tag => !selectedTags.includes(tag))
+    const availableTags = suggestedTags.filter(tag => !tagFilter.tags.includes(tag))
 
     const handleAddTag = (tag: string) => {
         if (!tag) { return false }
-        if (selectedTags.includes(tag)) {
+        if (tagFilter.tags.includes(tag)) {
             toast.error(`Tag "${tag}" already exists.`, { position: "top-center" })
             return false
         }
 
-        setSelectedTags([...selectedTags, tag])
+        setTagFilter({ ...tagFilter, tags: [...tagFilter.tags, tag] })
         return true
     }
     const handleRemoveTag = (tagToRemove: string) => {
-        setSelectedTags(selectedTags.filter((tag) => tag !== tagToRemove))
+        setTagFilter({ ...tagFilter, tags: tagFilter.tags.filter((tag) => tag !== tagToRemove) })
         return true
     }
 
@@ -63,7 +65,7 @@ export function TagArea({
 
     return (
         <ul className={cn("flex w-full gap-2 flex-wrap items-center", className)} {...props}>
-            {selectedTags.map((tag) => (
+            {tagFilter.tags.map((tag) => (
                 <li key={tag} className="contents">
                     <Badge
                         variant="secondary"

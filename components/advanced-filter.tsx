@@ -3,7 +3,7 @@
 import * as React from "react"
 import { type DateRange } from "react-day-picker"
 import { format } from "date-fns"
-import { useQueryState, useQueryStates, parseAsBoolean, parseAsInteger, parseAsStringEnum, parseAsArrayOf, parseAsIsoDate } from "nuqs"
+import { useQueryState, useQueryStates, parseAsStringLiteral, parseAsJson } from "nuqs"
 import { ChevronsUpDown, ArrowDownWideNarrow, Clock, Star, Tag, CalendarDays, CalendarRange, CalendarIcon, WholeWord, Flame, Trophy } from "lucide-react"
 
 import {
@@ -42,15 +42,24 @@ import { TagArea } from "@/components/tag-area"
 
 import { cn } from "@/lib/utils"
 import { Category, Sort, AirDateMode, Season } from "@/lib/constants"
+import { airDateSchema, ratingSchema, tagSchema } from "@/lib/search-params"
 import { type Option } from "@/types/option"
 
 
+const categoryValues = Object.values(Category);
+// Type guard for SortValue
 type SortValue = typeof Sort[keyof typeof Sort];
 const sortValues = Object.values(Sort);
-// Type guard for SortValue
 function isSortValue(value: string): value is SortValue {
     return sortValues.includes(value as SortValue);
 }
+// Type guard for SeasonValue
+type SeasonValue = typeof Season[keyof typeof Season];
+const seasonValues = Object.values(Season);
+function isSeasonValue(value: string): value is SeasonValue {
+    return seasonValues.includes(value as SeasonValue);
+}
+
 // Options for sort select
 const sortOptions: Option[] = [
     {
@@ -69,13 +78,6 @@ const sortOptions: Option[] = [
         icon: Trophy,
     }
 ] as const
-
-type AirDateModeValue = typeof AirDateMode[keyof typeof AirDateMode];
-const airDateModeValues = Object.values(AirDateMode);
-// Type guard for AirDateModeValue
-function isAirDateModeValue(value: string): value is AirDateModeValue {
-    return airDateModeValues.includes(value as AirDateModeValue);
-}
 // Options for air date mode select
 const airDateModeOptions: Option[] = [
     {
@@ -89,13 +91,6 @@ const airDateModeOptions: Option[] = [
         icon: CalendarRange,
     }
 ] as const
-
-// Type guard for SeasonValue
-type SeasonValue = typeof Season[keyof typeof Season];
-const seasonValues = Object.values(Season);
-function isSeasonValue(value: string): value is SeasonValue {
-    return seasonValues.includes(value as SeasonValue);
-}
 // Options for season select
 const seasonOptions = [
     {
@@ -115,8 +110,6 @@ const seasonOptions = [
         label: "Autumn"
     }
 ] as const
-
-const categoryValues = Object.values(Category);
 
 
 function ActivationTooltipWrapper({
@@ -154,29 +147,26 @@ export function AdvancedFilter({
 }) {
     // Sync states with URL query parameters
     const [filters, setFilters] = useQueryStates({
-        sort: parseAsStringEnum(sortValues).withDefault(Sort.Match),
-        airDate: parseAsStringEnum(airDateModeValues).withDefault(AirDateMode.Period),
-        year: parseAsInteger.withDefault(now.getFullYear()),
-        season: parseAsStringEnum(seasonValues).withDefault(seasonValues[Math.floor(now.getMonth() / 3)]),
-        startDate: parseAsIsoDate,
-        endDate: parseAsIsoDate,
-        rating: parseAsArrayOf(parseAsInteger).withDefault([6, 8]),
-
-        withAirDate: parseAsBoolean.withDefault(false),
-        withRating: parseAsBoolean.withDefault(false),
-        withTag: parseAsBoolean.withDefault(false),
+        category: parseAsStringLiteral(categoryValues).withDefault(Category.Anime),
+        sort: parseAsStringLiteral(sortValues).withDefault(Sort.Match),
+        airDate: parseAsJson(airDateSchema).withDefault({
+            enable: false,
+            mode: AirDateMode.Period,
+            year: now.getFullYear(),
+            season: seasonValues[Math.floor(now.getMonth() / 3)],
+        }),
+        rating: parseAsJson(ratingSchema).withDefault({
+            enable: false,
+            min: 6,
+            max: 8,
+        }),
+        tag: parseAsJson(tagSchema).withDefault({
+            enable: false,
+            tags: [],
+        }),
     })
-    const [category] = useQueryState("category", parseAsStringEnum(categoryValues).withDefault(Category.Anime))
 
     const [isOpen, setIsOpen] = React.useState(false)
-    const dateRange: DateRange | undefined = (filters.startDate || filters.endDate) ? {
-        from: filters.startDate ?? undefined,
-        to: filters.endDate ?? undefined,
-    } : undefined
-
-    const endYear = Math.max(now.getFullYear(), filters.year) + 1;
-    const startYear = Math.min(1970, filters.year);
-    const years = Array.from({ length: endYear - startYear + 1 }, (_, i) => endYear - i);
 
     return (
         <Collapsible
@@ -214,10 +204,10 @@ export function AdvancedFilter({
             <CollapsibleContent className="flex flex-col gap-4">
                 <ul className="flex items-center gap-2">
                     <li className="contents">
-                        <ActivationTooltipWrapper pressed={filters.withAirDate}>
+                        <ActivationTooltipWrapper pressed={filters.airDate.enable}>
                             <Toggle
-                                pressed={filters.withAirDate}
-                                onPressedChange={(value) => setFilters({ withAirDate: value })}
+                                pressed={filters.airDate.enable}
+                                onPressedChange={(value) => setFilters({ airDate: { ...filters.airDate, enable: value } })}
                                 className="mr-1"
                             >
                                 <Clock className="text-muted-foreground" />
@@ -228,9 +218,28 @@ export function AdvancedFilter({
                         <ToggleGroup
                             type="single"
                             variant="outline"
-                            value={filters.airDate}
-                            onValueChange={(value) => { if (isAirDateModeValue(value)) { setFilters({ airDate: value }) } }}
-                            disabled={!filters.withAirDate}
+                            value={filters.airDate.mode}
+                            onValueChange={(value) => {
+                                if (value === AirDateMode.Period) {
+                                    setFilters({
+                                        airDate: {
+                                            enable: filters.airDate.enable,
+                                            mode: AirDateMode.Period,
+                                            year: now.getFullYear(),
+                                            season: seasonValues[Math.floor(now.getMonth() / 3)],
+                                        }
+                                    })
+                                } else if (value === AirDateMode.Range) {
+                                    setFilters({
+                                        airDate: {
+                                            enable: filters.airDate.enable,
+                                            mode: AirDateMode.Range,
+                                        }
+                                    })
+                                }
+                            }
+                            }
+                            disabled={!filters.airDate.enable}
                         >
                             {airDateModeOptions.map((option) => (
                                 <ToggleGroupItem key={option.value} value={option.value} className="w-23 capitalize">
@@ -240,20 +249,28 @@ export function AdvancedFilter({
                         </ToggleGroup>
                     </li>
                     <li className="flex items-center gap-2">
-                        {filters.airDate === AirDateMode.Period && (
+                        {filters.airDate.mode === AirDateMode.Period && (
                             <>
-                                <Select value={filters.year.toString()} onValueChange={(value) => setFilters({ year: parseInt(value, 10) })} disabled={!filters.withAirDate}>
+                                <Select value={filters.airDate.year.toString()} onValueChange={(value) => {
+                                    if (filters.airDate.mode === AirDateMode.Period) {
+                                        setFilters({ airDate: { ...filters.airDate, year: parseInt(value, 10) } })
+                                    }
+                                }} disabled={!filters.airDate.enable}>
                                     <SelectTrigger className="w-21.5 font-medium">
                                         <SelectValue placeholder="Year" />
                                     </SelectTrigger>
                                     <SelectContent className="max-h-64 w-[--radix-select-trigger-width] min-w-[--radix-select-trigger-width]">
-                                        {years.map((year) => (
+                                        {Array.from({ length: (now.getFullYear() + 1) - 1970 + 1 }, (_, i) => now.getFullYear() + 1 - i).map((year) => (
                                             <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
-                                {category === Category.Anime && (
-                                    <Select value={filters.season} onValueChange={(value) => { if (isSeasonValue(value)) { setFilters({ season: value }) } }} disabled={!filters.withAirDate}>
+                                {filters.category === Category.Anime && (
+                                    <Select value={filters.airDate.season} onValueChange={(value) => {
+                                        if (filters.airDate.mode === AirDateMode.Period && isSeasonValue(value)) {
+                                            setFilters({ airDate: { ...filters.airDate, season: value } })
+                                        }
+                                    }} disabled={!filters.airDate.enable}>
                                         <SelectTrigger className="w-26.5 font-medium">
                                             <SelectValue placeholder="Season" />
                                         </SelectTrigger>
@@ -268,16 +285,16 @@ export function AdvancedFilter({
                                 )}
                             </>
                         )}
-                        {filters.airDate === AirDateMode.Range && (
+                        {filters.airDate.mode === AirDateMode.Range && (
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <Button
                                         id="date"
                                         variant="outline"
-                                        disabled={!filters.withAirDate}
+                                        disabled={!filters.airDate.enable}
                                     >
-                                        {dateRange && dateRange.from && dateRange.to ? (
-                                            `${format(dateRange.from, "MMM dd, y")} ~ ${format(dateRange.to, "MMM dd, y")}`
+                                        {filters.airDate.from && filters.airDate.to ? (
+                                            `${format(filters.airDate.from, "MMM dd, y")} ~ ${format(filters.airDate.to, "MMM dd, y")}`
                                         ) : (
                                             <span className="text-muted-foreground">from ... to ...</span>
                                         )}
@@ -287,18 +304,28 @@ export function AdvancedFilter({
                                 <PopoverContent className="w-auto p-0" align="start">
                                     <Calendar
                                         mode="range"
-                                        defaultMonth={dateRange?.from}
-                                        selected={dateRange}
-                                        onSelect={(range) => setFilters({
-                                            startDate: range?.from,
-                                            endDate: range?.to,
-                                        })}
-                                        endMonth={filters.year !== 0 ? new Date(new Date().getFullYear(), new Date().getMonth() + 6) : undefined}
+                                        defaultMonth={filters.airDate.from ? new Date(filters.airDate.from) : undefined}
+                                        selected={{
+                                            from: filters.airDate.from ? new Date(filters.airDate.from) : undefined,
+                                            to: filters.airDate.to ? new Date(filters.airDate.to) : undefined
+                                        }}
+                                        onSelect={(range) => {
+                                            if (filters.airDate.mode === AirDateMode.Range) {
+                                                setFilters({
+                                                    airDate: {
+                                                        ...filters.airDate,
+                                                        from: range?.from?.toISOString().slice(0, 10),
+                                                        to: range?.to?.toISOString().slice(0, 10),
+                                                    }
+                                                })
+                                            }
+                                        }}
+                                        endMonth={new Date(now.getFullYear(), now.getMonth() + 6)}
                                         numberOfMonths={2}
                                         captionLayout="dropdown"
                                         hideWeekdays
                                         className="rounded-lg shadow-sm"
-                                        disabled={!filters.withAirDate}
+                                        disabled={!filters.airDate.enable}
                                     />
                                 </PopoverContent>
                             </Popover>
@@ -307,10 +334,10 @@ export function AdvancedFilter({
                 </ul>
                 <ul className="flex h-7 items-center gap-2">
                     <li className="contents">
-                        <ActivationTooltipWrapper pressed={filters.withRating}>
+                        <ActivationTooltipWrapper pressed={filters.rating.enable}>
                             <Toggle
-                                pressed={filters.withRating}
-                                onPressedChange={(value) => setFilters({ withRating: value })}
+                                pressed={filters.rating.enable}
+                                onPressedChange={(value) => setFilters({ rating: { ...filters.rating, enable: value } })}
                                 className="mr-1"
                             >
                                 <Star className="text-muted-foreground" />
@@ -319,27 +346,27 @@ export function AdvancedFilter({
                     </li>
                     <li className="flex w-full max-w-3xs items-center gap-2 ml-2">
                         <Label className="text-xs text-muted-foreground tabular-nums">
-                            {filters.rating.at(0)?.toFixed(1)}
+                            {filters.rating.min.toFixed(1)}
                         </Label>
                         <Slider
-                            value={filters.rating}
-                            onValueChange={(value) => setFilters({ rating: value })}
-                            min={1}
-                            max={9.9}
+                            value={[filters.rating.min, filters.rating.max]}
+                            onValueChange={(value) => setFilters({ rating: { ...filters.rating, min: value[0], max: value[1] } })}
+                            min={0}
+                            max={10}
                             step={0.1}
-                            disabled={!filters.withRating}
+                            disabled={!filters.rating.enable}
                         />
                         <Label className="text-xs text-muted-foreground tabular-nums">
-                            {filters.rating.at(1)?.toFixed(1)}
+                            {filters.rating.max.toFixed(1)}
                         </Label>
                     </li>
                 </ul>
                 <ul className="flex gap-2">
                     <li className="contents">
-                        <ActivationTooltipWrapper pressed={filters.withTag}>
+                        <ActivationTooltipWrapper pressed={filters.tag.enable}>
                             <Toggle
-                                pressed={filters.withTag}
-                                onPressedChange={(value) => setFilters({ withTag: value })}
+                                pressed={filters.tag.enable}
+                                onPressedChange={(value) => setFilters({ tag: { ...filters.tag, enable: value } })}
                                 className="mr-1"
                             >
                                 <Tag className="text-muted-foreground" />
@@ -349,7 +376,7 @@ export function AdvancedFilter({
                     <li className="mt-0.5">
                         <TagArea
                             suggestedTags={isLoading ? [] : suggestedTags}
-                            disabled={!filters.withTag}
+                            disabled={!filters.tag.enable}
                         />
                     </li>
                 </ul>

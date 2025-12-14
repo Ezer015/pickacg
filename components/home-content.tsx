@@ -4,7 +4,7 @@ import * as React from "react"
 import useSWRInfinite from "swr/infinite"
 import { SearchSlash, Ban } from "lucide-react"
 import { useInView } from "react-intersection-observer"
-import { useQueryStates, parseAsArrayOf, parseAsBoolean, parseAsInteger, parseAsIsoDate, parseAsString, parseAsStringEnum } from "nuqs"
+import { useQueryStates, parseAsJson, parseAsString, parseAsStringLiteral } from "nuqs"
 
 import {
     Item,
@@ -26,6 +26,7 @@ import { NavigationBar } from "@/components/navigation-bar"
 import { SearchBox } from "@/components/search-box"
 import { AdvancedFilter } from "@/components/advanced-filter"
 import { SubjectCard } from "@/components/subject-card"
+import { ratingSchema, airDateSchema, tagSchema } from "@/lib/search-params"
 import { Category, Sort, AirDateMode, Season } from "@/lib/constants"
 import { SearchPayload, SearchResponse } from "@/types/api"
 
@@ -35,7 +36,6 @@ const pageLimit = 20;
 
 const categoryValues = Object.values(Category);
 const sortValues = Object.values(Sort);
-const airDateModeValues = Object.values(AirDateMode);
 const seasonValues = Object.values(Season);
 
 const CategoryID = {
@@ -70,37 +70,44 @@ export function HomeContent({ now }: { now: Date }) {
     // Sync filters with URL query parameters
     const [filters] = useQueryStates({
         query: parseAsString.withDefault(''),
-        category: parseAsStringEnum(categoryValues).withDefault(Category.Anime),
-        sort: parseAsStringEnum(sortValues).withDefault(Sort.Match),
-        airDate: parseAsStringEnum(airDateModeValues).withDefault(AirDateMode.Period),
-        year: parseAsInteger.withDefault(now.getFullYear()),
-        season: parseAsStringEnum(seasonValues).withDefault(seasonValues[Math.floor(now.getMonth() / 3)]),
-        startDate: parseAsIsoDate,
-        endDate: parseAsIsoDate,
-        rating: parseAsArrayOf(parseAsInteger).withDefault([6, 8]),
-        tags: parseAsArrayOf(parseAsString).withDefault([]),
+        category: parseAsStringLiteral(categoryValues).withDefault(Category.Anime),
+        sort: parseAsStringLiteral(sortValues).withDefault(Sort.Match),
 
-        withAirDate: parseAsBoolean.withDefault(false),
-        withRating: parseAsBoolean.withDefault(false),
-        withTag: parseAsBoolean.withDefault(false),
+        airDate: parseAsJson(airDateSchema).withDefault({
+            enable: false,
+            mode: AirDateMode.Period,
+            year: now.getFullYear(),
+            season: seasonValues[Math.floor(now.getMonth() / 3)],
+        }),
+
+        rating: parseAsJson(ratingSchema).withDefault({
+            enable: false,
+            min: 6,
+            max: 8,
+        }),
+
+        tag: parseAsJson(tagSchema).withDefault({
+            enable: false,
+            tags: [],
+        }),
     })
 
     const getKey = (pageIndex: number, previousPageData: SearchResponse | null) => {
         if (previousPageData && previousPageData.total <= previousPageData.limit + previousPageData.offset) { return null; }
 
-        const airDate = filters.withAirDate && filters.airDate === AirDateMode.Range
+        const airDate = filters.airDate.enable && filters.airDate.mode === AirDateMode.Range
             ? [
-                filters.startDate ? `>=${filters.startDate.toISOString().slice(0, 10)}` : null,
-                filters.endDate ? `<=${filters.endDate.toISOString().slice(0, 10)}` : null
+                filters.airDate.from ? `>=${filters.airDate.from}` : null,
+                filters.airDate.to ? `<=${filters.airDate.to}` : null
             ].filter((val) => val !== null) : [];
-        const rating = filters.withRating && filters.rating.length === 2
-            ? [`>=${filters.rating.at(0) ?? 0}`, `<=${filters.rating.at(1) ?? 10000}`] : [];
+        const rating = filters.rating.enable
+            ? [`>=${filters.rating.min}`, `<=${filters.rating.max}`] : [];
         const tags = [...new Set([
-            ...(filters.withAirDate && filters.airDate === AirDateMode.Period
-                ? [filters.category === Category.Anime ? `${filters.year}年${SeasonStart[filters.season]}月` : filters.year.toString()]
+            ...(filters.airDate.enable && filters.airDate.mode === AirDateMode.Period
+                ? [filters.category === Category.Anime ? `${filters.airDate.year}年${SeasonStart[filters.airDate.season]}月` : filters.airDate.year.toString()]
                 : []),
-            ...(filters.withTag
-                ? filters.tags
+            ...(filters.tag.enable
+                ? filters.tag.tags
                 : []),
         ])];
         const rank = filters.sort === Sort.Rank ? [">0"] : [];
@@ -156,10 +163,13 @@ export function HomeContent({ now }: { now: Date }) {
                 <SearchBox isLoading={isLoading} />
                 <AdvancedFilter
                     now={now}
-                    suggestedTags={suggestedTags.filter(tag => tag !== (filters.category === Category.Anime
-                        ? `${filters.year}年${SeasonStart[filters.season]}月`
-                        : filters.year.toString()
-                    ))}
+                    suggestedTags={suggestedTags.filter(tag => filters.airDate.mode === AirDateMode.Period
+                        ? tag !== (filters.category === Category.Anime
+                            ? `${filters.airDate.year}年${SeasonStart[filters.airDate.season]}月`
+                            : filters.airDate.year.toString()
+                        )
+                        : tag
+                    )}
                     isLoading={isLoading}
                 />
 
