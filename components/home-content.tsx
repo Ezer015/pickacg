@@ -163,13 +163,10 @@ export function HomeContent({ now }: { now: Date }) {
                 <SearchBox isLoading={isLoading} />
                 <AdvancedFilter
                     now={now}
-                    suggestedTags={suggestedTags.filter(tag => filters.airDate.mode === AirDateMode.Period
-                        ? tag !== (filters.category === Category.Anime
-                            ? `${filters.airDate.year}年${SeasonStart[filters.airDate.season]}月`
-                            : filters.airDate.year.toString()
-                        )
-                        : tag
-                    )}
+                    suggestedTags={suggestedTags.filter(tag => tag && !(filters.category === Category.Anime
+                        ? /^\d{4}年(\d{1,2}月)?$/.test(tag)
+                        : /^\d{4}(年)?$/.test(tag)
+                    ))}
                     isLoading={isLoading}
                 />
 

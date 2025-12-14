@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useQueryState, parseAsJson } from "nuqs"
+import { useQueryState, parseAsStringLiteral, parseAsJson } from "nuqs"
 import Link from "next/link"
 import Image from "next/image"
 import { Copy, Plus } from "lucide-react"
@@ -26,6 +26,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 import { type Subject } from "@/types/api"
 import { tagSchema } from "@/lib/search-params"
+import { Category } from "@/lib/constants"
 
 const bangumiUrl = process.env.NEXT_PUBLIC_BANGUMI_URL
 const placeholderUrl = "https://lain.bgm.tv/img/no_icon_subject.png"
@@ -37,6 +38,7 @@ export function SubjectCard({
 }: React.ComponentProps<typeof Item> & { subject: Subject }) {
     // Sync states with URL query parameters
     const [tagFilter, setTagFilter] = useQueryState('tag', parseAsJson(tagSchema).withDefault({ enable: false, tags: [] }))
+    const [category] = useQueryState('category', parseAsStringLiteral(Object.values(Category)).withDefault(Category.Anime))
 
     const [isLoading, setIsLoading] = React.useState(true);
 
@@ -98,6 +100,10 @@ export function SubjectCard({
                 <ItemTitle className="text-sm text-muted-foreground line-clamp-1" lang={subject.name_cn ? "ja" : "en"}>{subject.name_cn ? subject.name : "Missing Translation..."}</ItemTitle>
                 <ul className="pt-2 flex w-full flex-wrap gap-2 items-center h-30 content-start overflow-hidden">
                     {subject.tags
+                        .filter(tag => tag.name && !(category === Category.Anime
+                            ? /^\d{4}年(\d{1,2}月)?$/.test(tag.name)
+                            : /^\d{4}(年)?$/.test(tag.name)
+                        ))
                         // sort by ratio
                         .sort((a, b) => {
                             const ratioA = a.total_cont !== 0 ? a.count / a.total_cont : 0;

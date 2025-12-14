@@ -46,7 +46,6 @@ import { airDateSchema, ratingSchema, tagSchema } from "@/lib/search-params"
 import { type Option } from "@/types/option"
 
 
-const categoryValues = Object.values(Category);
 // Type guard for SortValue
 type SortValue = typeof Sort[keyof typeof Sort];
 const sortValues = Object.values(Sort);
@@ -147,7 +146,7 @@ export function AdvancedFilter({
 }) {
     // Sync states with URL query parameters
     const [filters, setFilters] = useQueryStates({
-        category: parseAsStringLiteral(categoryValues).withDefault(Category.Anime),
+        category: parseAsStringLiteral(Object.values(Category)).withDefault(Category.Anime),
         sort: parseAsStringLiteral(sortValues).withDefault(Sort.Match),
         airDate: parseAsJson(airDateSchema).withDefault({
             enable: false,
