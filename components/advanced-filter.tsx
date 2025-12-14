@@ -1,10 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { type DateRange } from "react-day-picker"
 import { format } from "date-fns"
-import { useQueryState, useQueryStates, parseAsStringLiteral, parseAsJson } from "nuqs"
-import { ChevronsUpDown, ArrowDownWideNarrow, Clock, Star, Tag, CalendarDays, CalendarRange, CalendarIcon, WholeWord, Flame, Trophy } from "lucide-react"
+import { useQueryStates, parseAsStringLiteral, parseAsJson } from "nuqs"
+import { ChevronsUpDown, ArrowDownWideNarrow, Clock, Star, Tag, CalendarDays, CalendarRange, CalendarIcon, WholeWord, Flame, Trophy, RotateCcw } from "lucide-react"
 
 import {
     ToggleGroup,
@@ -192,9 +191,26 @@ export function AdvancedFilter({
                         ))}
                     </ToggleGroup>
                 </li>
+
+                {isOpen && (
+                    <li className="contents">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-8 text-muted-foreground ml-auto"
+                            onClick={() => setFilters({ airDate: null, rating: null, tag: null })}
+                        >
+                            <RotateCcw />
+                        </Button>
+                    </li>
+                )}
                 <li className="contents">
                     <CollapsibleTrigger asChild>
-                        <Button variant="ghost" size="icon" className="size-8 text-muted-foreground ml-auto">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className={cn("size-8 text-muted-foreground", !isOpen && "ml-auto")}
+                        >
                             <ChevronsUpDown />
                         </Button>
                     </CollapsibleTrigger>
