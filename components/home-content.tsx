@@ -147,10 +147,9 @@ export function HomeContent({ now }: { now: Date }) {
         return Array.from(
             firstPage.data
                 .flatMap((subject) => subject.tags ?? [])
-                .reduce((acc, tag) => {
-                    acc.set(tag.name, (acc.get(tag.name) || 0) + tag.count);
-                    return acc;
-                }, new Map<string, number>()))
+                .reduce((acc, tag) => acc.set(tag.name, (acc.get(tag.name) || 0) + tag.count / Math.sqrt(tag.total_cont)), new Map<string, number>()))
+            // filter out tags that are too long
+            .filter((tag) => tag && tag[0].length < 16)
             .sort((a, b) => b[1] - a[1])
             .slice(0, 10)
             .map(([name]) => name);

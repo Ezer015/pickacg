@@ -128,9 +128,11 @@ export function SubjectCard({
                 <ul className="pt-2 flex w-full flex-wrap gap-2 items-center h-30 content-start overflow-hidden">
                     {subject.tags
                         // filter out tags that are too long
-                        .filter((tag) => tag.name.length < 16)
+                        .filter((tag) => tag.name && tag.name.length < 16)
+                        // filter out tags that are too common
+                        .filter((tag) => !(category === Category.Anime && ["TV", "日本"].includes(tag.name)))
                         // filter out air date tags
-                        .filter((tag) => tag.name && !(category === Category.Anime
+                        .filter((tag) => !(category === Category.Anime
                             ? /^\d{4}年(\d{1,2}月)?$/.test(tag.name)
                             : /^\d{4}(年)?$/.test(tag.name)
                         ))
