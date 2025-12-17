@@ -160,7 +160,7 @@ export function HomeContent({ now }: { now: Date }) {
 
     return (
         <div className="flex min-h-screen items-center justify-center font-sans">
-            <main className="flex min-h-screen w-full max-w-7xl flex-col items-center gap-6 py-6 px-12 sm:items-start">
+            <main className="flex min-h-screen w-full max-w-400 flex-col items-center gap-6 py-2 px-4 sm:py-6 sm:px-12 sm:items-start">
                 <NavigationBar />
                 <SearchBox isLoading={isLoading} />
                 <AdvancedFilter
@@ -172,7 +172,7 @@ export function HomeContent({ now }: { now: Date }) {
                     isLoading={isLoading}
                 />
 
-                <ItemGroup className="grid w-full gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                <ItemGroup className="grid w-full gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                     {data?.flatMap((page) =>
                         page.data
                             // exclude mismatches by air date
