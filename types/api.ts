@@ -2,7 +2,13 @@ export type Subject = {
     id: number
     name: string
     name_cn: string
-    image: string
+    images: {
+        grid: string
+        small: string
+        common: string
+        medium: string
+        large: string
+    }
     date?: string
     summary: string
     eps: number

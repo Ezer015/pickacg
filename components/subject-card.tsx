@@ -56,7 +56,7 @@ export function SubjectCard({
                         className="relative block h-full w-full"
                     >
                         <Image
-                            src={subject.image || placeholderUrl}
+                            src={subject.images.common || placeholderUrl}
                             alt={subject.name_cn || subject.name}
                             fill
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -68,7 +68,7 @@ export function SubjectCard({
                     <ul className="absolute top-2 px-2 w-full flex gap-1 items-start justify-between">
                         <li>
                             {subject.rating.rank > 0 && (
-                                <Badge variant="secondary" className="z-10 bg-accent/60 backdrop-blur-xs font-semibold">
+                                <Badge variant="secondary" className="bg-accent/60 backdrop-blur-xs font-semibold">
                                     # {subject.rating.rank}
                                 </Badge>
                             )}
@@ -78,7 +78,7 @@ export function SubjectCard({
                                 <TooltipProvider>
                                     <Tooltip>
                                         <TooltipTrigger asChild>
-                                            <Badge variant="secondary" className="z-10 bg-accent/60 backdrop-blur-xs font-semibold">
+                                            <Badge variant="secondary" className="bg-accent/60 backdrop-blur-xs font-semibold">
                                                 {subject.rating.score.toFixed(1)}
                                             </Badge>
                                         </TooltipTrigger>
