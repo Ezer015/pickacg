@@ -90,10 +90,12 @@ export function SubjectCard({
                     </ul>
                     <ul className="absolute bottom-2 px-2 w-full flex gap-1 items-start justify-between">
                         <li className="contents">
-                            <Badge variant="secondary" className="bg-accent/60 backdrop-blur-xs font-medium">
-                                <CalendarFold className="mr-0.5" />
-                                {subject.date}
-                            </Badge>
+                            {subject.date && (
+                                <Badge variant="secondary" className="bg-accent/60 backdrop-blur-xs font-medium">
+                                    <CalendarFold className="mr-0.5" />
+                                    {subject.date}
+                                </Badge>
+                            )}
                         </li>
                         <li className="contents">
                             {subject.eps > 0 && (
