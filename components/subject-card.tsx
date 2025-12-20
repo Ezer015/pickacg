@@ -4,8 +4,7 @@ import * as React from "react"
 import { useQueryState, parseAsStringLiteral, parseAsJson } from "nuqs"
 import Link from "next/link"
 import Image from "next/image"
-import { Copy, Plus, Star, CalendarFold, Clapperboard } from "lucide-react"
-import { toast } from "sonner"
+import { ExternalLink, Plus, Star, CalendarFold, Clapperboard } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -116,17 +115,21 @@ export function SubjectCard({
                     <ItemTitle className="text-lg font-bold line-clamp-1" lang={subject.name_cn ? "zh" : "jp"}>
                         {subject.name_cn || subject.name}
                     </ItemTitle>
-                    <Button
-                        variant="ghost"
-                        size="icon-xs"
-                        className="text-muted-foreground hover:text-foreground"
-                        onClick={() => {
-                            navigator.clipboard.writeText(subject.name_cn || subject.name);
-                            toast.success("Copied to clipboard", { position: "top-center" });
-                        }}
-                    >
-                        <Copy />
-                    </Button>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    variant="ghost"
+                                    size="icon-xs"
+                                    className="text-muted-foreground hover:text-foreground"
+                                    onClick={() => window.open(`https://search.bilibili.com/all?keyword=${encodeURIComponent(subject.name_cn || subject.name)}`, '_blank')}
+                                >
+                                    <ExternalLink />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Open in <span className="font-medium">bilibili</span></TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                 </div>
                 <ItemSeparator />
                 <ItemTitle className="text-sm text-muted-foreground line-clamp-1" lang={subject.name_cn ? "ja" : "en"}>{subject.name_cn ? subject.name : "Missing Translation..."}</ItemTitle>
