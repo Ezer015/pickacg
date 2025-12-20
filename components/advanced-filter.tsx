@@ -3,7 +3,7 @@
 import * as React from "react"
 import { format } from "date-fns"
 import { useQueryStates, parseAsStringLiteral, parseAsJson } from "nuqs"
-import { ChevronsUpDown, ArrowDownWideNarrow, Clock, Star, Tag, CalendarDays, CalendarRange, CalendarIcon, WholeWord, Flame, Trophy, RotateCcw } from "lucide-react"
+import { ChevronsUpDown, ArrowDownWideNarrow, Clock, Star, Tag, CalendarDays, CalendarRange, CalendarIcon, WholeWord, Flame, Trophy, RotateCcw, Snowflake, Sun, Flower, Leaf } from "lucide-react"
 
 import {
     ToggleGroup,
@@ -93,19 +93,23 @@ const airDateModeOptions: Option[] = [
 const seasonOptions = [
     {
         value: Season.Winter,
-        label: "Winter"
+        label: "Winter",
+        icon: Snowflake,
     },
     {
         value: Season.Spring,
-        label: "Spring"
+        label: "Spring",
+        icon: Flower,
     },
     {
         value: Season.Summer,
-        label: "Summer"
+        label: "Summer",
+        icon: Sun,
     },
     {
         value: Season.Autumn,
-        label: "Autumn"
+        label: "Autumn",
+        icon: Leaf,
     }
 ] as const
 
@@ -185,35 +189,38 @@ export function AdvancedFilter({
                         onValueChange={(value) => { if (isSortValue(value)) { setFilters({ sort: value }) } }}
                     >
                         {sortOptions.map((option) => (
-                            <ToggleGroupItem key={option.value} value={option.value} className="w-23 capitalize">
-                                {option.icon && <option.icon />} {option.label}
+                            <ToggleGroupItem key={option.value} value={option.value} className="w-17 sm:w-23 capitalize">
+                                {option.icon && <option.icon className="hidden sm:block" />} {option.label}
                             </ToggleGroupItem>
                         ))}
                     </ToggleGroup>
                 </li>
-
                 <li className="contents">
-                    {isOpen && (
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-8 text-muted-foreground ml-auto"
-                            onClick={() => setFilters({ airDate: null, rating: null, tag: null })}
-                        >
-                            <RotateCcw />
-                        </Button>
-                    )}
-                </li>
-                <li className="contents">
-                    <CollapsibleTrigger asChild>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className={cn("size-8 text-muted-foreground", !isOpen && "ml-auto")}
-                        >
-                            <ChevronsUpDown />
-                        </Button>
-                    </CollapsibleTrigger>
+                    <ul className="flex ml-auto gap-2">
+                        <li className="contents">
+                            {isOpen && (
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="size-8 text-muted-foreground hidden sm:inline-flex"
+                                    onClick={() => setFilters({ airDate: null, rating: null, tag: null })}
+                                >
+                                    <RotateCcw />
+                                </Button>
+                            )}
+                        </li>
+                        <li className="contents">
+                            <CollapsibleTrigger asChild>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="size-8 text-muted-foreground"
+                                >
+                                    <ChevronsUpDown />
+                                </Button>
+                            </CollapsibleTrigger>
+                        </li>
+                    </ul>
                 </li>
             </ul>
             <CollapsibleContent className="flex flex-col gap-4">
@@ -257,13 +264,13 @@ export function AdvancedFilter({
                             disabled={!filters.airDate.enable}
                         >
                             {airDateModeOptions.map((option) => (
-                                <ToggleGroupItem key={option.value} value={option.value} className="w-23 capitalize">
-                                    {option.icon && <option.icon />} {option.label}
+                                <ToggleGroupItem key={option.value} value={option.value} className="w-17 sm:w-23 capitalize">
+                                    {option.icon && <option.icon className="hidden sm:block" />} {option.label}
                                 </ToggleGroupItem>
                             ))}
                         </ToggleGroup>
                     </li>
-                    <li className="flex items-center gap-2">
+                    <li className="flex items-center gap-2 min-w-0">
                         {filters.airDate.mode === AirDateMode.Period && (
                             <>
                                 <Select value={filters.airDate.year.toString()} onValueChange={(value) => {
@@ -271,12 +278,22 @@ export function AdvancedFilter({
                                         setFilters({ airDate: { ...filters.airDate, year: parseInt(value, 10) } })
                                     }
                                 }} disabled={!filters.airDate.enable}>
-                                    <SelectTrigger className="w-21.5 font-medium">
+                                    <SelectTrigger className="sm:w-28 font-medium">
                                         <SelectValue placeholder="Year" />
                                     </SelectTrigger>
                                     <SelectContent className="max-h-64 w-[--radix-select-trigger-width] min-w-[--radix-select-trigger-width]">
                                         {Array.from({ length: (now.getFullYear() + 1) - 1970 + 1 }, (_, i) => now.getFullYear() + 1 - i).map((year) => (
-                                            <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+                                            <SelectItem key={year} value={year.toString()}>
+                                                <time dateTime={year.toString()} className="relative text-muted-foreground">
+                                                    <CalendarIcon />
+                                                    <div className="absolute inset-0 flex items-center justify-center pt-[35%]">
+                                                        <span className="text-[0.5rem] font-black font-mono">
+                                                            {year % 100}
+                                                        </span>
+                                                    </div>
+                                                </time>
+                                                <Label className="capitalize hidden sm:block">{year}</Label>
+                                            </SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
@@ -286,13 +303,13 @@ export function AdvancedFilter({
                                             setFilters({ airDate: { ...filters.airDate, season: value } })
                                         }
                                     }} disabled={!filters.airDate.enable}>
-                                        <SelectTrigger className="w-26.5 font-medium">
+                                        <SelectTrigger className="sm:w-32 font-medium">
                                             <SelectValue placeholder="Season" />
                                         </SelectTrigger>
                                         <SelectContent className="w-[--radix-select-trigger-width] min-w-[--radix-select-trigger-width]">
                                             {seasonOptions.map((option) => (
                                                 <SelectItem key={option.value} value={option.value}>
-                                                    {option.label}
+                                                    <option.icon /> <Label className="capitalize hidden sm:block">{option.label}</Label>
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
@@ -307,12 +324,15 @@ export function AdvancedFilter({
                                         id="date"
                                         variant="outline"
                                         disabled={!filters.airDate.enable}
+                                        className="max-w-full"
                                     >
-                                        {filters.airDate.from && filters.airDate.to ? (
-                                            `${format(filters.airDate.from, "MMM dd, y")} ~ ${format(filters.airDate.to, "MMM dd, y")}`
-                                        ) : (
-                                            <span className="text-muted-foreground">from ... to ...</span>
-                                        )}
+                                        <span className="truncate">
+                                            {filters.airDate.from && filters.airDate.to ? (
+                                                `${format(filters.airDate.from, "MMM dd, y")} ~ ${format(filters.airDate.to, "MMM dd, y")}`
+                                            ) : (
+                                                <span className="text-muted-foreground">from ... to ...</span>
+                                            )}
+                                        </span>
                                         <CalendarIcon />
                                     </Button>
                                 </PopoverTrigger>

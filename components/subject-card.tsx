@@ -4,8 +4,10 @@ import * as React from "react"
 import { useQueryState, parseAsStringLiteral, parseAsJson } from "nuqs"
 import Link from "next/link"
 import Image from "next/image"
-import { Copy, Plus, CalendarFold, Clapperboard } from "lucide-react"
+import { Copy, Plus, Star, CalendarFold, Clapperboard } from "lucide-react"
 import { toast } from "sonner"
+
+import { cn } from "@/lib/utils"
 
 import {
     Item,
@@ -43,9 +45,9 @@ export function SubjectCard({
     const [isLoading, setIsLoading] = React.useState(true);
 
     return (
-        <Item key={subject.id} variant="muted" className={className} {...props}>
-            <ItemHeader className="relative">
-                <figure className="relative aspect-3/4 h-full w-full overflow-hidden rounded-sm">
+        <Item key={subject.id} variant="muted" className={cn("flex-nowrap items-stretch sm:flex-wrap", className)} {...props}>
+            <ItemHeader className="relative basis-auto sm:basis-full">
+                <figure className="relative h-full w-auto sm:h-auto sm:w-full aspect-3/4 overflow-hidden rounded-sm">
                     {isLoading && (
                         <Skeleton className="absolute inset-0 h-full w-full z-10" />
                     )}
@@ -68,7 +70,7 @@ export function SubjectCard({
                     <ul className="absolute top-2 px-2 w-full flex gap-1 items-start justify-between">
                         <li>
                             {subject.rating.rank > 0 && (
-                                <Badge variant="secondary" className="bg-accent/60 backdrop-blur-xs font-semibold">
+                                <Badge variant="secondary" className="bg-accent/60 backdrop-blur-xs font-semibold hidden sm:block">
                                     # {subject.rating.rank}
                                 </Badge>
                             )}
@@ -79,6 +81,7 @@ export function SubjectCard({
                                     <Tooltip>
                                         <TooltipTrigger asChild>
                                             <Badge variant="secondary" className="bg-accent/60 backdrop-blur-xs font-semibold">
+                                                <Star className="mr-0.5" />
                                                 {subject.rating.score.toFixed(1)}
                                             </Badge>
                                         </TooltipTrigger>
@@ -99,7 +102,7 @@ export function SubjectCard({
                         </li>
                         <li className="contents">
                             {subject.eps > 0 && (
-                                <Badge variant="secondary" className="bg-accent/60 backdrop-blur-xs font-medium">
+                                <Badge variant="secondary" className="bg-accent/60 backdrop-blur-xs font-medium hidden sm:inline-flex">
                                     <Clapperboard className="mr-0.5" />
                                     {subject.eps} eps
                                 </Badge>

@@ -187,9 +187,9 @@ export function HomeContent({ now }: { now: Date }) {
                     )}
                     {size > (data?.length ?? 0) && !reachedEnd && (
                         <>{Array.from({ length: pageLimit }).map((_, index) => (
-                            <Item key={`skeleton-${index}`} variant="muted">
-                                <ItemHeader>
-                                    <Skeleton className="aspect-3/4 w-full rounded-sm" />
+                            <Item key={`skeleton-${index}`} variant="muted" className="flex-nowrap items-stretch sm:flex-wrap">
+                                <ItemHeader className="basis-auto sm:basis-full">
+                                    <Skeleton className="h-full w-auto sm:h-auto sm:w-full aspect-3/4 rounded-sm" />
                                 </ItemHeader>
                                 <ItemContent>
                                     <Skeleton className="h-6 w-1/2" />
