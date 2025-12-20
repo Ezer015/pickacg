@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { format } from "date-fns"
+import { format, parseISO } from "date-fns"
 import { useQueryStates, parseAsStringLiteral, parseAsJson } from "nuqs"
 import { ChevronsUpDown, ArrowDownWideNarrow, Clock, Star, Tag, CalendarDays, CalendarRange, CalendarIcon, WholeWord, Flame, Trophy, RotateCcw, Snowflake, Sun, Flower, Leaf } from "lucide-react"
 
@@ -326,7 +326,7 @@ export function AdvancedFilter({
                                     >
                                         <span className="truncate">
                                             {filters.airDate.from && filters.airDate.to ? (
-                                                `${format(filters.airDate.from, "MMM dd, y")} ~ ${format(filters.airDate.to, "MMM dd, y")}`
+                                                `${format(parseISO(filters.airDate.from), "MMM dd, y")} ~ ${format(parseISO(filters.airDate.to), "MMM dd, y")}`
                                             ) : (
                                                 <span className="text-muted-foreground">from ... to ...</span>
                                             )}
@@ -337,18 +337,18 @@ export function AdvancedFilter({
                                 <PopoverContent className="w-auto p-0" align="start">
                                     <Calendar
                                         mode="range"
-                                        defaultMonth={filters.airDate.from ? new Date(filters.airDate.from) : undefined}
+                                        defaultMonth={filters.airDate.from ? parseISO(filters.airDate.from) : undefined}
                                         selected={{
-                                            from: filters.airDate.from ? new Date(filters.airDate.from) : undefined,
-                                            to: filters.airDate.to ? new Date(filters.airDate.to) : undefined
+                                            from: filters.airDate.from ? parseISO(filters.airDate.from) : undefined,
+                                            to: filters.airDate.to ? parseISO(filters.airDate.to) : undefined
                                         }}
                                         onSelect={(range) => {
                                             if (filters.airDate.mode === AirDateMode.Range) {
                                                 setFilters({
                                                     airDate: {
                                                         ...filters.airDate,
-                                                        from: range?.from?.toISOString().slice(0, 10),
-                                                        to: range?.to?.toISOString().slice(0, 10),
+                                                        from: range?.from ? format(range.from, "yyyy-MM-dd") : undefined,
+                                                        to: range?.to ? format(range.to, "yyyy-MM-dd") : undefined,
                                                     }
                                                 })
                                             }
