@@ -7,7 +7,12 @@ import { toast } from "sonner"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import {
+    InputGroup,
+    InputGroupAddon,
+    InputGroupButton,
+    InputGroupInput,
+} from "@/components/ui/input-group"
 import {
     Popover,
     PopoverContent,
@@ -107,16 +112,19 @@ export function TagArea({
 
                     <PopoverContent className="w-fit p-2 flex flex-col gap-3" align="start" side="bottom" sideOffset={10}>
                         <form onSubmit={handleSubmit} className="flex gap-2">
-                            <Input
-                                value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
-                                placeholder="tag..."
-                                className="h-auto text-sm"
-                                autoFocus
-                            />
-                            <Button type="submit" variant="secondary" size="sm" disabled={disabled || !inputValue.trim()}>
-                                Add <Kbd>⏎</Kbd>
-                            </Button>
+                            <InputGroup className="flex-1">
+                                <InputGroupInput
+                                    placeholder="tag..."
+                                    value={inputValue}
+                                    onChange={(e) => setInputValue(e.target.value)}
+                                    autoFocus
+                                />
+                                <InputGroupAddon align="inline-end">
+                                    <InputGroupButton type="submit" variant="secondary" disabled={disabled || !inputValue.trim()}>
+                                        Add <Kbd>⏎</Kbd>
+                                    </InputGroupButton>
+                                </InputGroupAddon>
+                            </InputGroup>
                         </form>
                         {availableTags.length > 0 && (
                             <ul className="flex w-full max-w-xs gap-2 flex-wrap">

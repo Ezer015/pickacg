@@ -47,7 +47,7 @@ export function SubjectCard({
     return (
         <Item key={subject.id} variant="muted" className={cn("flex-nowrap items-stretch sm:flex-wrap", className)} {...props}>
             <ItemHeader className="relative basis-auto sm:basis-full">
-                <figure className="relative h-full w-auto sm:h-auto sm:w-full aspect-3/4 overflow-hidden rounded-sm">
+                <figure className="relative h-full w-auto sm:h-auto sm:w-full aspect-3/4 overflow-hidden rounded-2xl">
                     {isLoading && (
                         <Skeleton className="absolute inset-0 h-full w-full z-10" />
                     )}

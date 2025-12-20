@@ -178,7 +178,7 @@ export function AdvancedFilter({
         >
             <ul className="flex items-center gap-2">
                 <li className="contents">
-                    <ArrowDownWideNarrow className="h-9 px-2 min-w-9 rounded-md bg-accent/60 text-muted-foreground mr-1" />
+                    <ArrowDownWideNarrow className="h-9 px-2 min-w-9 rounded-full bg-accent/60 text-muted-foreground mr-1" />
                 </li>
                 <li className="contents">
                     <ToggleGroup
@@ -201,7 +201,7 @@ export function AdvancedFilter({
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="size-8 text-muted-foreground hidden sm:inline-flex"
+                                    className="size-8 text-muted-foreground"
                                     onClick={() => setFilters({ airDate: null, rating: null, tag: null })}
                                 >
                                     <RotateCcw />
