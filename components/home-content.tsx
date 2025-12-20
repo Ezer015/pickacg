@@ -77,7 +77,6 @@ export function HomeContent({ now }: { now: Date }) {
             enable: false,
             mode: AirDateMode.Period,
             year: now.getFullYear(),
-            season: seasonValues[Math.floor(now.getMonth() / 3)],
         }),
 
         rating: parseAsJson(ratingSchema).withDefault({
@@ -106,7 +105,7 @@ export function HomeContent({ now }: { now: Date }) {
             : [];
         const tags = [...new Set([
             ...(filters.airDate.enable && filters.airDate.mode === AirDateMode.Period
-                ? [filters.category === Category.Anime ? `${filters.airDate.year}年${SeasonStart[filters.airDate.season]}月` : filters.airDate.year.toString()]
+                ? [filters.category === Category.Anime ? `${filters.airDate.year}年${SeasonStart[filters.airDate.season ?? seasonValues[Math.floor(now.getMonth() / 3)]]}月` : filters.airDate.year.toString()]
                 : []),
             ...(filters.tag.enable
                 ? filters.tag.tags
@@ -177,7 +176,7 @@ export function HomeContent({ now }: { now: Date }) {
                             // exclude mismatches by air date
                             .filter((subject) => filters.airDate.enable && filters.airDate.mode === AirDateMode.Period
                                 ? (filters.category === Category.Anime
-                                    ? [`${filters.airDate.year}年${SeasonStart[filters.airDate.season]}月`]
+                                    ? [`${filters.airDate.year}年${SeasonStart[filters.airDate.season ?? seasonValues[Math.floor(now.getMonth() / 3)]]}月`]
                                     : [filters.airDate.year.toString(), `${filters.airDate.year}年`])
                                     .includes(subject.tags.find((tag) => filters.category === Category.Anime
                                         ? /^\d{4}年\d{1,2}月$/.test(tag.name)

@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useQueryStates, parseAsString, parseAsStringLiteral } from 'nuqs';
+import { useQueryStates, parseAsString, parseAsStringLiteral, parseAsJson } from 'nuqs';
 import { Search } from "lucide-react"
 
 import {
@@ -21,7 +21,8 @@ import { Kbd } from "@/components/ui/kbd"
 import { Spinner } from "@/components/ui/spinner"
 
 import { cn } from "@/lib/utils";
-import { Category } from "@/lib/constants"
+import { AirDateMode, Category } from "@/lib/constants"
+import { airDateSchema } from "@/lib/search-params";
 import { type Option } from "@/types/option"
 
 type CategoryValue = typeof Category[keyof typeof Category];
@@ -66,6 +67,7 @@ export function SearchBox({
     const [filters, setFilters] = useQueryStates({
         query: parseAsString.withDefault(''),
         category: parseAsStringLiteral(categoryValues).withDefault(Category.Anime),
+        airDate: parseAsJson(airDateSchema),
     });
 
     const [queryInput, setQueryInput] = React.useState(filters.query)
@@ -77,7 +79,16 @@ export function SearchBox({
             onSubmit={(e) => { e.preventDefault(); setFilters({ query: queryInput }) }}
             {...props}
         >
-            <Select value={filters.category} onValueChange={(value) => { if (isCategoryValue(value)) { setFilters({ category: value }) } }}>
+            <Select value={filters.category} onValueChange={(value) => {
+                if (isCategoryValue(value)) {
+                    setFilters({
+                        category: value,
+                        airDate: filters.category === Category.Anime && filters.airDate?.mode === AirDateMode.Period
+                            ? { ...filters.airDate, season: undefined }
+                            : filters.airDate
+                    })
+                }
+            }}>
                 <SelectTrigger className="w-[91px] shrink-0 capitalize font-medium">
                     <SelectValue />
                 </SelectTrigger>

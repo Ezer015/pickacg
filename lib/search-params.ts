@@ -11,7 +11,7 @@ export const airDateSchema = z.intersection(
         z.object({
             mode: z.literal(AirDateMode.Period),
             year: z.int(),
-            season: z.enum(Object.values(Season)),
+            season: z.enum(Object.values(Season)).optional(),
         }),
         // Range
         z.object({
