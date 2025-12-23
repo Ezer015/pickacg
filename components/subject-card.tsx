@@ -30,6 +30,8 @@ import { tagSchema } from "@/lib/search-params"
 import { Category } from "@/lib/constants"
 
 const bangumiUrl = process.env.NEXT_PUBLIC_BANGUMI_URL
+const apiUrl = process.env.NEXT_PUBLIC_API_URL
+
 const placeholderUrl = "https://lain.bgm.tv/img/no_icon_subject.png"
 
 export function SubjectCard({
@@ -38,7 +40,7 @@ export function SubjectCard({
     ...props
 }: React.ComponentProps<typeof Item> & { subject: Subject }) {
     // Sync states with URL query parameters
-    const [tagFilter, setTagFilter] = useQueryState('tag', parseAsJson(tagSchema).withDefault({ enable: false, tags: [] }))
+    const [tagFilter, setTagFilter] = useQueryState('tags', parseAsJson(tagSchema).withDefault({ enable: false, tags: [] }))
     const [category] = useQueryState('category', parseAsStringLiteral(Object.values(Category)).withDefault(Category.Anime))
 
     const [isLoading, setIsLoading] = React.useState(true);
@@ -57,8 +59,8 @@ export function SubjectCard({
                         className="relative block h-full w-full"
                     >
                         <Image
-                            src={subject.images.common || placeholderUrl}
-                            alt={subject.name_cn || subject.name}
+                            src={`${apiUrl}/v0/subjects/${subject.id}/image?type=common` || placeholderUrl}
+                            alt={subject.nameCN || subject.name}
                             fill
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             className="object-cover"
@@ -100,7 +102,7 @@ export function SubjectCard({
                             )}
                         </li>
                         <li className="contents">
-                            {subject.eps > 0 && (
+                            {subject.eps && (
                                 <Badge variant="secondary" className="bg-accent/60 backdrop-blur-xs font-medium hidden sm:inline-flex">
                                     <Clapperboard className="mr-0.5" />
                                     {subject.eps} eps
@@ -112,8 +114,8 @@ export function SubjectCard({
             </ItemHeader>
             <ItemContent className="min-w-0">
                 <div className="flex justify-between gap-2">
-                    <ItemTitle className="text-lg font-bold line-clamp-1" lang={subject.name_cn ? "zh" : "jp"}>
-                        {subject.name_cn || subject.name}
+                    <ItemTitle className="text-lg font-bold line-clamp-1" lang={subject.nameCN ? "zh" : "jp"}>
+                        {subject.nameCN || subject.name}
                     </ItemTitle>
                     <TooltipProvider>
                         <Tooltip>
@@ -122,7 +124,7 @@ export function SubjectCard({
                                     variant="ghost"
                                     size="icon-xs"
                                     className="text-muted-foreground hover:text-foreground"
-                                    onClick={() => window.open(`https://search.bilibili.com/all?keyword=${encodeURIComponent(subject.name_cn || subject.name)}`, '_blank')}
+                                    onClick={() => window.open(`https://search.bilibili.com/all?keyword=${encodeURIComponent(subject.nameCN || subject.name)}`, '_blank')}
                                 >
                                     <ExternalLink />
                                 </Button>
@@ -132,9 +134,9 @@ export function SubjectCard({
                     </TooltipProvider>
                 </div>
                 <ItemSeparator />
-                <ItemTitle className="text-sm text-muted-foreground line-clamp-1" lang={subject.name_cn ? "ja" : "en"}>{subject.name_cn ? subject.name : "Missing Translation..."}</ItemTitle>
+                <ItemTitle className="text-sm text-muted-foreground line-clamp-1" lang={subject.nameCN ? "ja" : "en"}>{subject.nameCN ? subject.name : "Missing Translation..."}</ItemTitle>
                 <ul className="pt-2 flex w-full flex-wrap gap-2 items-center h-30 content-start overflow-hidden">
-                    {subject.tags
+                    {(subject.tags ?? [])
                         // filter out tags that are too long
                         .filter((tag) => tag.name && tag.name.length < 16)
                         // filter out tags that are too common
@@ -144,14 +146,8 @@ export function SubjectCard({
                             ? /^\d{4}年(\d{1,2}月)?$/.test(tag.name)
                             : /^\d{4}(年)?$/.test(tag.name)
                         ))
-                        // sort by ratio
-                        .sort((a, b) => {
-                            const ratioA = a.total_cont !== 0 ? a.count / a.total_cont : 0;
-                            const ratioB = b.total_cont !== 0 ? b.count / b.total_cont : 0;
-                            return Math.max(ratioA, ratioB) <= Math.min(ratioA, ratioB) * 10
-                                ? ratioB - ratioA
-                                : b.count - a.count;
-                        })
+                        // sort by count
+                        .sort((a, b) => b.count - a.count)
                         .map((tag) => (
                             <li key={tag.name} className="contents">
                                 <Badge variant={tagFilter.enable && tagFilter.tags.includes(tag.name) ? "default" : "secondary"}>

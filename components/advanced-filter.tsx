@@ -145,7 +145,7 @@ export function AdvancedFilter({
     suggestedTags?: string[],
     isLoading?: boolean,
 }) {
-    const now = new Date()
+    const now = React.useMemo(() => new Date(), [])
 
     // Sync states with URL query parameters
     const [filters, setFilters] = useQueryStates({
@@ -161,7 +161,7 @@ export function AdvancedFilter({
             min: 6,
             max: 8,
         }),
-        tag: parseAsJson(tagSchema).withDefault({
+        tags: parseAsJson(tagSchema).withDefault({
             enable: false,
             tags: [],
         }),
@@ -202,7 +202,7 @@ export function AdvancedFilter({
                                     variant="ghost"
                                     size="icon"
                                     className="size-8 text-muted-foreground"
-                                    onClick={() => setFilters({ airDate: null, rating: null, tag: null })}
+                                    onClick={() => setFilters({ airDate: null, rating: null, tags: null })}
                                 >
                                     <RotateCcw />
                                 </Button>
@@ -385,8 +385,8 @@ export function AdvancedFilter({
                             value={[filters.rating.min, filters.rating.max]}
                             onValueChange={(value) => setFilters({ rating: { ...filters.rating, min: value[0], max: value[1] } })}
                             min={0}
-                            max={10}
-                            step={0.1}
+                            max={9}
+                            step={1}
                             disabled={!filters.rating.enable}
                         />
                         <Label className="text-xs text-muted-foreground tabular-nums">
@@ -396,10 +396,10 @@ export function AdvancedFilter({
                 </ul>
                 <ul className="flex gap-2">
                     <li className="contents">
-                        <ActivationTooltipWrapper pressed={filters.tag.enable}>
+                        <ActivationTooltipWrapper pressed={filters.tags.enable}>
                             <Toggle
-                                pressed={filters.tag.enable}
-                                onPressedChange={(value) => setFilters({ tag: { ...filters.tag, enable: value } })}
+                                pressed={filters.tags.enable}
+                                onPressedChange={(value) => setFilters({ tags: { ...filters.tags, enable: value } })}
                                 className="mr-1"
                             >
                                 <Tag className="text-muted-foreground" />
@@ -409,7 +409,7 @@ export function AdvancedFilter({
                     <li className="mt-0.5">
                         <TagArea
                             suggestedTags={isLoading ? [] : suggestedTags}
-                            disabled={!filters.tag.enable}
+                            disabled={!filters.tags.enable}
                         />
                     </li>
                 </ul>

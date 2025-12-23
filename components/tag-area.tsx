@@ -39,7 +39,7 @@ export function TagArea({
     disabled?: boolean
 }) {
     // Sync states with URL query parameter
-    const [tagFilter, setTagFilter] = useQueryState('tag', parseAsJson(tagSchema).withDefault({ enable: false, tags: [] }))
+    const [tagFilter, setTagFilter] = useQueryState('tags', parseAsJson(tagSchema).withDefault({ enable: false, tags: [] }))
 
     const [inputValue, setInputValue] = React.useState<string>("")
     const [open, setOpen] = React.useState(false)

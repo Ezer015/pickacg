@@ -28,11 +28,10 @@ import { AdvancedFilter } from "@/components/advanced-filter"
 import { SubjectCard } from "@/components/subject-card"
 import { ratingSchema, airDateSchema, tagSchema } from "@/lib/search-params"
 import { Category, Sort, AirDateMode, Season } from "@/lib/constants"
-import { SearchPayload, SearchResponse } from "@/types/api"
+import { SearchParam, SearchPayload, SearchResponse } from "@/types/api"
+import { search } from "@/app/actions"
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL
-const searchEndPoint = process.env.NEXT_PUBLIC_SEARCH_ENDPOINT
-const pageLimit = 20;
+const pageLimit = 50;
 
 const categoryValues = Object.values(Category);
 const sortValues = Object.values(Sort);
@@ -52,22 +51,10 @@ const SeasonStart = {
     [Season.Autumn]: 10,
 } as const
 
-const fetcher = async ([url, payload]: [string, SearchPayload]) => {
-    const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-    })
-
-    if (!res.ok) {
-        throw new Error("Failed to load subjects.")
-    }
-
-    return await res.json()
-}
+const fetcher = async (key: { params: SearchParam, payload: SearchPayload }) => await search(key)
 
 export function HomeContent() {
-    const now = new Date()
+    const now = React.useMemo(() => new Date(), [])
 
     // Sync filters with URL query parameters
     const [filters] = useQueryStates({
@@ -87,14 +74,14 @@ export function HomeContent() {
             max: 8,
         }),
 
-        tag: parseAsJson(tagSchema).withDefault({
+        tags: parseAsJson(tagSchema).withDefault({
             enable: false,
             tags: [],
         }),
     })
 
     const getKey = (pageIndex: number, previousPageData: SearchResponse | null) => {
-        if (previousPageData && previousPageData.total <= previousPageData.limit + previousPageData.offset) { return null; }
+        if (previousPageData && previousPageData.total <= pageIndex * pageLimit) { return null; }
 
         const airDate = filters.airDate.enable && filters.airDate.mode === AirDateMode.Range
             ? [
@@ -109,28 +96,28 @@ export function HomeContent() {
             ...(filters.airDate.enable && filters.airDate.mode === AirDateMode.Period
                 ? [filters.category === Category.Anime ? `${filters.airDate.year}年${SeasonStart[filters.airDate.season ?? seasonValues[Math.floor(now.getMonth() / 3)]]}月` : filters.airDate.year.toString()]
                 : []),
-            ...(filters.tag.enable
-                ? filters.tag.tags
+            ...(filters.tags.enable
+                ? filters.tags.tags
                 : []),
         ])];
         const rank = filters.sort === Sort.Rank ? [">0"] : [];
 
-        const params = new URLSearchParams({
-            limit: pageLimit.toString(),
-            offset: (pageIndex * pageLimit).toString(),
-        });
+        const params: SearchParam = {
+            limit: pageLimit,
+            offset: (pageIndex * pageLimit),
+        };
         const payload: SearchPayload = {
             keyword: filters.query,
             sort: filters.sort,
             filter: {
                 type: [CategoryID[filters.category]],
-                ...(tags.length > 0 && { tag: tags }),
+                ...(tags.length > 0 && { tags: tags }),
                 ...(airDate.length > 0 && { air_date: airDate }),
                 ...(rating.length > 0 && { rating: rating }),
                 ...(rank.length > 0 && { rank: rank }),
             },
         };
-        return [`${apiUrl}${searchEndPoint}?${params}`, payload]
+        return { params, payload }
     }
     const { data, error, isLoading, size, setSize } = useSWRInfinite<SearchResponse>(getKey, fetcher)
 
@@ -148,7 +135,7 @@ export function HomeContent() {
         return Array.from(
             firstPage.data
                 .flatMap((subject) => subject.tags ?? [])
-                .reduce((acc, tag) => acc.set(tag.name, (acc.get(tag.name) || 0) + tag.count / Math.sqrt(tag.total_cont)), new Map<string, number>()))
+                .reduce((acc, tag) => acc.set(tag.name, (acc.get(tag.name) || 0) + tag.count), new Map<string, number>()))
             // filter out tags that are too long
             .filter((tag) => tag && tag[0].length < 16)
             .sort((a, b) => b[1] - a[1])
@@ -156,7 +143,7 @@ export function HomeContent() {
             .map(([name]) => name);
     }, [firstPage]);
 
-    const reachedEnd = data && data.length && data.at(-1)!.total <= data.at(-1)!.limit + data.at(-1)!.offset;
+    const reachedEnd = data && data.length && data.at(-1)!.total <= (data.length - 1) * pageLimit + data.at(-1)!.data.length;
 
     return (
         <div className="flex min-h-screen items-center justify-center font-sans">
@@ -179,7 +166,7 @@ export function HomeContent() {
                                 ? (filters.category === Category.Anime
                                     ? [`${filters.airDate.year}年${SeasonStart[filters.airDate.season ?? seasonValues[Math.floor(now.getMonth() / 3)]]}月`]
                                     : [filters.airDate.year.toString(), `${filters.airDate.year}年`])
-                                    .includes(subject.tags.find((tag) => filters.category === Category.Anime
+                                    .includes(subject.tags?.find((tag) => filters.category === Category.Anime
                                         ? /^\d{4}年\d{1,2}月$/.test(tag.name)
                                         : /^\d{4}(年)?$/.test(tag.name))?.name ?? "")
                                 : subject)

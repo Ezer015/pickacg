@@ -1,6 +1,6 @@
 {
   "name": "pick-anime-cool",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -20,10 +20,12 @@
     "@radix-ui/react-toggle": "^1.1.10",
     "@radix-ui/react-toggle-group": "^1.1.11",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@urql/next": "^2.0.0",
     "@vercel/analytics": "^1.6.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "graphql": "^16.12.0",
     "lucide-react": "^0.555.0",
     "next": "16.0.8",
     "next-themes": "^0.4.6",
@@ -36,6 +38,7 @@
     "sonner": "^2.0.7",
     "swr": "^2.3.7",
     "tailwind-merge": "^3.4.0",
+    "urql": "^5.0.1",
     "zod": "^4.1.13"
   },
   "devDependencies": {
