@@ -1,10 +1,10 @@
 import * as React from "react"
-import { HomeContent } from "@/components/home-content"
+import { HomeContent } from "@/app/content"
 
 export default function Home() {
     return (
         <React.Suspense>
-            <HomeContent now={new Date()} />
+            <HomeContent />
         </React.Suspense>
     )
 }

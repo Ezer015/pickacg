@@ -138,15 +138,15 @@ function ActivationTooltipWrapper({
 
 export function AdvancedFilter({
     className,
-    now,
     suggestedTags = [],
     isLoading = false,
     ...props
 }: React.ComponentProps<typeof Collapsible> & {
-    now: Date,
     suggestedTags?: string[],
     isLoading?: boolean,
 }) {
+    const now = new Date()
+
     // Sync states with URL query parameters
     const [filters, setFilters] = useQueryStates({
         category: parseAsStringLiteral(Object.values(Category)).withDefault(Category.Anime),

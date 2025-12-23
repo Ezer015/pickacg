@@ -66,7 +66,9 @@ const fetcher = async ([url, payload]: [string, SearchPayload]) => {
     return await res.json()
 }
 
-export function HomeContent({ now }: { now: Date }) {
+export function HomeContent() {
+    const now = new Date()
+
     // Sync filters with URL query parameters
     const [filters] = useQueryStates({
         query: parseAsString.withDefault(''),
@@ -162,7 +164,6 @@ export function HomeContent({ now }: { now: Date }) {
                 <NavigationBar />
                 <SearchBox isLoading={isLoading} />
                 <AdvancedFilter
-                    now={now}
                     suggestedTags={suggestedTags.filter((tag) => tag && !(filters.category === Category.Anime
                         ? /^\d{4}年(\d{1,2}月)?$/.test(tag)
                         : /^\d{4}(年)?$/.test(tag)
