@@ -26,6 +26,14 @@ function isCategoryID(value: number): value is keyof typeof CategoryFromID {
     return Object.keys(CategoryFromID).includes(String(value))
 }
 
+type CharacterQueryResponse = {
+    id: number
+    infobox?: {
+        key: string
+        values: { v: string }[]
+    }[]
+}
+
 export async function search({
     params,
     payload
@@ -62,13 +70,11 @@ export async function search({
                         volumes
                         series
                         tags { name count }
-                        characters(limit: 30) {
+                        characters(limit: 100) {
                             character {
                                 id
                                 name
-                                images {
-                                    grid
-                                }
+                                images { grid }
                             }
                             type
                         }
@@ -83,6 +89,39 @@ export async function search({
         }
 
         const detailData = result.data as DetailResponse
+
+        // Collect all main character IDs to fetch their details (nameCN)
+        const mainCharacterIds = new Set(
+            Object.values(detailData)
+                .flatMap((subject) => subject?.characters ?? [])
+                .filter((c) => c.type === Character.Main)
+                .map((c) => c.character.id)
+        )
+
+        const characterNameCN: Record<number, string | undefined> = mainCharacterIds.size > 0 ?
+            await (async () => {
+                const characterResult = await getClient().query(`
+                    query {
+                        ${Array.from(mainCharacterIds).map(id => `
+                            character${id}: character(id: ${id}) {
+                                id
+                                infobox { key values { v } }
+                            }
+                        `).join('\n')}
+                    }
+                `, {})
+
+                if (characterResult.error || !characterResult.data) { return {} }
+
+                return Object.fromEntries(
+                    Object.values(characterResult.data as Record<string, CharacterQueryResponse>)
+                        .filter((c): c is CharacterQueryResponse => Boolean(c))
+                        .map((character) => [
+                            character.id,
+                            character.infobox?.find(({ key }) => key === "简体中文名")?.values?.[0]?.v,
+                        ])
+                )
+            })() : {}
 
         const subjectDetails = subjects.map((subject) => {
             const extra = detailData[`subject${subject.id}`]
@@ -121,6 +160,7 @@ export async function search({
                     .map((c) => ({
                         id: c.character.id,
                         name: c.character.name,
+                        nameCN: characterNameCN[c.character.id],
                         image: c.character.images?.grid,
                     })),
             }

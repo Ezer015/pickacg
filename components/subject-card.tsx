@@ -24,6 +24,11 @@ import {
 } from "@/components/ui/tooltip"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
+import {
+    Avatar,
+    AvatarFallback,
+    AvatarImage,
+} from "@/components/ui/avatar"
 
 import { type Subject } from "@/types/api"
 import { tagSchema } from "@/lib/search-params"
@@ -92,28 +97,63 @@ export function SubjectCard({
                             )}
                         </li>
                     </ul>
-                    <ul className="absolute bottom-2 px-2 w-full flex gap-1 items-start justify-between">
-                        <li className="contents">
-                            {subject.date && (
-                                <Badge variant="secondary" className="bg-accent/60 backdrop-blur-xs font-medium">
-                                    <CalendarFold className="mr-0.5" />
-                                    {subject.date}
-                                </Badge>
-                            )}
+                    <ul className="absolute bottom-2 px-2 w-full flex flex-col gap-3">
+                        <li className="-space-x-2 px-1.5 hidden sm:flex">
+                            {subject.characters?.slice(0, 7).map((character, index) => (
+                                <TooltipProvider key={character.id}>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Link
+                                                href={`${bangumiUrl}/character/${character.id}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="relative block"
+                                                style={{ zIndex: 10 - index }}
+                                            >
+                                                <Avatar className="ring-accent/75 ring-3">
+                                                    <AvatarImage
+                                                        src={character.image}
+                                                        alt={character.nameCN || character.name}
+                                                    />
+                                                    <AvatarFallback>{(character.nameCN || character.name).at(0)}</AvatarFallback>
+                                                </Avatar>
+                                            </Link>
+                                        </TooltipTrigger>
+                                        <TooltipContent className="flex flex-col items-center">
+                                            <span className="font-medium">{character.nameCN || character.name}</span>
+                                            {character.nameCN && character.name && (
+                                                <span className="text-[0.5rem] text-muted-foreground">{character.name}</span>
+                                            )}
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            ))}
                         </li>
                         <li className="contents">
-                            {(subject.eps ?? 0) > 0 && (
-                                <Badge variant="secondary" className="bg-accent/60 backdrop-blur-xs font-medium hidden sm:inline-flex">
-                                    {(subject.type === Category.Anime || subject.type === Category.Real) && <>
-                                        <Clapperboard className="mr-0.5" />
-                                        {subject.eps} eps
-                                    </>}
-                                    {(subject.type === Category.Book) && <>
-                                        <Book className="mr-0.5" />
-                                        {subject.eps} vol
-                                    </>}
-                                </Badge>
-                            )}
+                            <ul className="flex gap-1 items-start justify-between">
+                                <li className="contents">
+                                    {subject.date && (
+                                        <Badge variant="secondary" className="bg-accent/60 backdrop-blur-xs font-medium">
+                                            <CalendarFold className="mr-0.5" />
+                                            {subject.date}
+                                        </Badge>
+                                    )}
+                                </li>
+                                <li className="contents">
+                                    {(subject.eps ?? 0) > 0 && (
+                                        <Badge variant="secondary" className="bg-accent/60 backdrop-blur-xs font-medium hidden sm:inline-flex">
+                                            {(subject.type === Category.Anime || subject.type === Category.Real) && <>
+                                                <Clapperboard className="mr-0.5" />
+                                                {subject.eps} eps
+                                            </>}
+                                            {(subject.type === Category.Book) && <>
+                                                <Book className="mr-0.5" />
+                                                {subject.eps} vol
+                                            </>}
+                                        </Badge>
+                                    )}
+                                </li>
+                            </ul>
                         </li>
                     </ul>
                 </figure>

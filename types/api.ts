@@ -19,6 +19,7 @@ export type Subject = {
     characters?: {
         id: number
         name: string
+        nameCN?: string
         image?: string
     }[]
 }
@@ -62,6 +63,13 @@ export type DetailResponse = {
                 id: number
                 name: string
                 images?: { grid: string }
+                infobox?: {
+                    key: string
+                    values: {
+                        k: string
+                        v: string
+                    }[]
+                }[]
             }
             type: number
         }[]
