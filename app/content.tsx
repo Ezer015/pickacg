@@ -143,7 +143,7 @@ export function HomeContent() {
             .map(([name]) => name)
     }, [firstPage])
 
-    const reachedEnd = data && data.length && data.at(-1)!.total <= (data.length - 1) * pageLimit + data.at(-1)!.data.length
+    const reachedEnd = !isLoading && data && data.length && data.at(-1)!.total <= (data.length - 1) * pageLimit + data.at(-1)!.data.length
 
     return (
         <div className="flex min-h-screen items-center justify-center font-sans">

@@ -130,7 +130,7 @@ export async function search({
             return {
                 ...subject,
                 type: CategoryFromID[extra.type],
-                date: extra.airtime?.date,
+                date: extra.airtime?.date !== "1899-11-30" ? extra.airtime?.date : undefined,
                 eps: (CategoryFromID[extra.type] === Category.Anime || CategoryFromID[extra.type] === Category.Real) ? extra.eps
                     : CategoryFromID[extra.type] === Category.Book ? extra.volumes || extra.eps
                         : undefined,

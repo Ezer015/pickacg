@@ -131,7 +131,7 @@ export function SubjectCard({
                         </li>
                         <li className="contents">
                             <ul className="flex gap-1 items-start justify-between">
-                                <li className="contents">
+                                <li>
                                     {subject.date && (
                                         <Badge variant="secondary" className="bg-accent/60 backdrop-blur-xs font-medium">
                                             <CalendarFold className="mr-0.5" />
