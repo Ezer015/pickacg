@@ -46,16 +46,16 @@ import { type Option } from "@/types/option"
 
 
 // Type guard for SortValue
-type SortValue = typeof Sort[keyof typeof Sort];
-const sortValues = Object.values(Sort);
+type SortValue = typeof Sort[keyof typeof Sort]
+const sortValues = Object.values(Sort)
 function isSortValue(value: string): value is SortValue {
-    return sortValues.includes(value as SortValue);
+    return sortValues.includes(value as SortValue)
 }
 // Type guard for SeasonValue
-type SeasonValue = typeof Season[keyof typeof Season];
-const seasonValues = Object.values(Season);
+type SeasonValue = typeof Season[keyof typeof Season]
+const seasonValues = Object.values(Season)
 function isSeasonValue(value: string): value is SeasonValue {
-    return seasonValues.includes(value as SeasonValue);
+    return seasonValues.includes(value as SeasonValue)
 }
 
 // Options for sort select

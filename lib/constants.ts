@@ -23,3 +23,11 @@ export const Season = {
     Summer: "summer",
     Autumn: "autumn",
 } as const
+
+export const Character = {
+    Main: 1,
+    Sub: 2,
+    Guest: 3,
+    Extra: 4,
+    Narrator: 5,
+} as const

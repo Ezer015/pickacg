@@ -4,7 +4,7 @@ import * as React from "react"
 import { useQueryState, parseAsStringLiteral, parseAsJson } from "nuqs"
 import Link from "next/link"
 import Image from "next/image"
-import { ExternalLink, Plus, Star, CalendarFold, Clapperboard } from "lucide-react"
+import { ExternalLink, Plus, Star, CalendarFold, Clapperboard, Book } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -43,7 +43,7 @@ export function SubjectCard({
     const [tagFilter, setTagFilter] = useQueryState('tags', parseAsJson(tagSchema).withDefault({ enable: false, tags: [] }))
     const [category] = useQueryState('category', parseAsStringLiteral(Object.values(Category)).withDefault(Category.Anime))
 
-    const [isLoading, setIsLoading] = React.useState(true);
+    const [isLoading, setIsLoading] = React.useState(true)
 
     return (
         <Item key={subject.id} variant="muted" className={cn("flex-nowrap items-stretch sm:flex-wrap", className)} {...props}>
@@ -102,10 +102,16 @@ export function SubjectCard({
                             )}
                         </li>
                         <li className="contents">
-                            {subject.eps && (
+                            {(subject.eps ?? 0) > 0 && (
                                 <Badge variant="secondary" className="bg-accent/60 backdrop-blur-xs font-medium hidden sm:inline-flex">
-                                    <Clapperboard className="mr-0.5" />
-                                    {subject.eps} eps
+                                    {(subject.type === Category.Anime || subject.type === Category.Real) && <>
+                                        <Clapperboard className="mr-0.5" />
+                                        {subject.eps} eps
+                                    </>}
+                                    {(subject.type === Category.Book) && <>
+                                        <Book className="mr-0.5" />
+                                        {subject.eps} vol
+                                    </>}
                                 </Badge>
                             )}
                         </li>

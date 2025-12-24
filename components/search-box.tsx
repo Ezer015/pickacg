@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useQueryStates, parseAsString, parseAsStringLiteral, parseAsJson } from 'nuqs';
+import { useQueryStates, parseAsString, parseAsStringLiteral, parseAsJson } from 'nuqs'
 import { Search } from "lucide-react"
 
 import {
@@ -20,16 +20,16 @@ import {
 import { Kbd } from "@/components/ui/kbd"
 import { Spinner } from "@/components/ui/spinner"
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 import { AirDateMode, Category } from "@/lib/constants"
-import { airDateSchema } from "@/lib/search-params";
+import { airDateSchema } from "@/lib/search-params"
 import { type Option } from "@/types/option"
 
-type CategoryValue = typeof Category[keyof typeof Category];
-const categoryValues = Object.values(Category);
+type CategoryValue = typeof Category[keyof typeof Category]
+const categoryValues = Object.values(Category)
 // Type guard for CategoryValue
 function isCategoryValue(value: string): value is CategoryValue {
-    return categoryValues.includes(value as CategoryValue);
+    return categoryValues.includes(value as CategoryValue)
 }
 // Options for category select
 const categoryOptions: Option[] = [
@@ -68,7 +68,7 @@ export function SearchBox({
         query: parseAsString.withDefault(''),
         category: parseAsStringLiteral(categoryValues).withDefault(Category.Anime),
         airDate: parseAsJson(airDateSchema),
-    });
+    })
 
     const [queryInput, setQueryInput] = React.useState(filters.query)
 
@@ -76,7 +76,10 @@ export function SearchBox({
         <form
             className={cn("flex w-full gap-2", className)}
             role="search"
-            onSubmit={(e) => { e.preventDefault(); setFilters({ query: queryInput }) }}
+            onSubmit={(e) => {
+                e.preventDefault()
+                setFilters({ query: queryInput })
+            }}
             {...props}
         >
             <Select value={filters.category} onValueChange={(value) => {

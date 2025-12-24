@@ -31,11 +31,11 @@ import { Category, Sort, AirDateMode, Season } from "@/lib/constants"
 import { SearchParam, SearchPayload, SearchResponse } from "@/types/api"
 import { search } from "@/app/actions"
 
-const pageLimit = 50;
+const pageLimit = 40
 
-const categoryValues = Object.values(Category);
-const sortValues = Object.values(Sort);
-const seasonValues = Object.values(Season);
+const categoryValues = Object.values(Category)
+const sortValues = Object.values(Sort)
+const seasonValues = Object.values(Season)
 
 const CategoryID = {
     [Category.Anime]: 2,
@@ -81,17 +81,17 @@ export function HomeContent() {
     })
 
     const getKey = (pageIndex: number, previousPageData: SearchResponse | null) => {
-        if (previousPageData && previousPageData.total <= pageIndex * pageLimit) { return null; }
+        if (previousPageData && previousPageData.total <= pageIndex * pageLimit) { return null }
 
         const airDate = filters.airDate.enable && filters.airDate.mode === AirDateMode.Range
             ? [
                 filters.airDate.from ? `>=${filters.airDate.from}` : null,
                 filters.airDate.to ? `<=${filters.airDate.to}` : null
             ].filter((val) => val !== null)
-            : [];
+            : []
         const rating = filters.rating.enable
             ? [`>=${filters.rating.min}`, `<=${filters.rating.max}`]
-            : [];
+            : []
         const tags = [...new Set([
             ...(filters.airDate.enable && filters.airDate.mode === AirDateMode.Period
                 ? [filters.category === Category.Anime ? `${filters.airDate.year}年${SeasonStart[filters.airDate.season ?? seasonValues[Math.floor(now.getMonth() / 3)]]}月` : filters.airDate.year.toString()]
@@ -99,13 +99,13 @@ export function HomeContent() {
             ...(filters.tags.enable
                 ? filters.tags.tags
                 : []),
-        ])];
-        const rank = filters.sort === Sort.Rank ? [">0"] : [];
+        ])]
+        const rank = filters.sort === Sort.Rank ? [">0"] : []
 
         const params: SearchParam = {
             limit: pageLimit,
             offset: (pageIndex * pageLimit),
-        };
+        }
         const payload: SearchPayload = {
             keyword: filters.query,
             sort: filters.sort,
@@ -116,7 +116,7 @@ export function HomeContent() {
                 ...(rating.length > 0 && { rating: rating }),
                 ...(rank.length > 0 && { rank: rank }),
             },
-        };
+        }
         return { params, payload }
     }
     const { data, error, isLoading, size, setSize } = useSWRInfinite<SearchResponse>(getKey, fetcher)
@@ -128,9 +128,9 @@ export function HomeContent() {
         }
     }, [inView, isLoading, setSize])
 
-    const firstPage = data?.at(0);
+    const firstPage = data?.at(0)
     const suggestedTags = React.useMemo(() => {
-        if (!firstPage?.data || firstPage.data.length === 0) { return []; }
+        if (!firstPage?.data || firstPage.data.length === 0) { return [] }
 
         return Array.from(
             firstPage.data
@@ -140,10 +140,10 @@ export function HomeContent() {
             .filter((tag) => tag && tag[0].length < 16)
             .sort((a, b) => b[1] - a[1])
             .slice(0, 10)
-            .map(([name]) => name);
-    }, [firstPage]);
+            .map(([name]) => name)
+    }, [firstPage])
 
-    const reachedEnd = data && data.length && data.at(-1)!.total <= (data.length - 1) * pageLimit + data.at(-1)!.data.length;
+    const reachedEnd = data && data.length && data.at(-1)!.total <= (data.length - 1) * pageLimit + data.at(-1)!.data.length
 
     return (
         <div className="flex min-h-screen items-center justify-center font-sans">
@@ -170,6 +170,8 @@ export function HomeContent() {
                                         ? /^\d{4}年\d{1,2}月$/.test(tag.name)
                                         : /^\d{4}(年)?$/.test(tag.name))?.name ?? "")
                                 : subject)
+                            // exclude non-series books
+                            .filter((subject) => filters.category !== Category.Book || subject.series)
                             .map((subject) => (<SubjectCard key={subject.id} subject={subject} />))
                     )}
                     {size > (data?.length ?? 0) && !reachedEnd && (
@@ -226,5 +228,5 @@ export function HomeContent() {
                 </Empty>
             </main>
         </div>
-    );
+    )
 }
