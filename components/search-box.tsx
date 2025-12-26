@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useSearchParams } from "next/navigation"
 import { useQueryStates, parseAsString, parseAsStringLiteral, parseAsJson } from 'nuqs'
 import { Search } from "lucide-react"
 
@@ -71,6 +72,10 @@ export function SearchBox({
     })
 
     const [queryInput, setQueryInput] = React.useState(filters.query)
+    const searchParams = useSearchParams()
+    React.useEffect(() => {
+        setQueryInput(filters.query)
+    }, [searchParams, filters.query])
 
     return (
         <form
