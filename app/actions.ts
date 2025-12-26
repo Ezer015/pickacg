@@ -1,11 +1,12 @@
 "use server"
 
-import { SearchParam, SearchPayload, SearchResponse, DetailResponse } from "@/types/api"
+import { headers } from "next/headers"
 import { createClient, cacheExchange, fetchExchange } from "urql"
 import { registerUrql } from '@urql/next/rsc'
 
-import { auth } from "@/auth"
+import { auth } from "@/lib/auth"
 import { Category, Character, Relation } from "@/lib/constants"
+import { SearchParam, SearchPayload, SearchResponse, DetailResponse } from "@/types/api"
 
 const apiUrl = process.env.API_URL
 const nextApiUrl = process.env.NEXT_API_URL
@@ -15,12 +16,25 @@ const makeClient = () => createClient({
     exchanges: [cacheExchange, fetchExchange],
     preferGetMethod: false,
     fetch: async (input: RequestInfo | URL, init?: RequestInit) => {
-        const session = await auth()
-        const headers = new Headers(init?.headers)
-        if (session?.accessToken) {
-            headers.set("Authorization", `Bearer ${session?.accessToken}`)
+        const session = await auth.api.getSession({ headers: await headers() })
+        let accessToken: string | undefined
+        if (session) {
+            try {
+                const result = await auth.api.getAccessToken({
+                    body: { providerId: "bangumi" },
+                    headers: await headers()
+                })
+                accessToken = result.accessToken
+            } catch (e) {
+                console.warn("Failed to get access token for GraphQL client:", e)
+            }
         }
-        return fetch(input, { ...init, headers })
+        return fetch(input, {
+            ...init, headers: {
+                ...init?.headers,
+                ...(accessToken && { Authorization: `Bearer ${accessToken}` })
+            }
+        })
     },
 })
 const { getClient } = registerUrql(makeClient)
@@ -53,13 +67,25 @@ export async function search({
     params: SearchParam
     payload: SearchPayload
 }): Promise<SearchResponse> {
-    const session = await auth()
+    const session = await auth.api.getSession({ headers: await headers() })
+    let accessToken: string | undefined
+    if (session) {
+        try {
+            const result = await auth.api.getAccessToken({
+                body: { providerId: "bangumi" },
+                headers: await headers()
+            })
+            accessToken = result.accessToken
+        } catch (e) {
+            console.warn("Failed to get access token for search:", e)
+        }
+    }
 
     const rawResult = await fetch(`https://${nextApiUrl}/p1/search/subjects?${new URLSearchParams(Object.fromEntries(Object.entries(params).map(([key, value]) => [key, String(value)])))}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            ...(session?.accessToken ? { Authorization: `Bearer ${session?.accessToken}` } : {}),
+            ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
         },
         body: JSON.stringify(payload),
     })

@@ -1,8 +1,9 @@
+"use client"
+
 import Image from "next/image"
 import Link from "next/link"
 import { User, LogOut } from "lucide-react"
 import { SiGithub } from "react-icons/si"
-import { signIn, signOut, auth } from "@/auth"
 
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -20,10 +21,11 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { authClient } from "@/lib/auth-client"
 import { cn } from "@/lib/utils"
 
-export async function NavigationBar({ className, ...props }: React.ComponentProps<'ul'>) {
-    const session = await auth()
+export function NavigationBar({ className, ...props }: React.ComponentProps<'ul'>) {
+    const user = authClient.useSession().data?.user
 
     return (
         <ul className={cn("sticky top-0 z-20 flex w-full items-center bg-background/90 backdrop-blur px-6 py-3 justify-between", className)} {...props}>
@@ -52,28 +54,25 @@ export async function NavigationBar({ className, ...props }: React.ComponentProp
                         <SiGithub />
                     </Link>
                 </Button>
-                {session?.user ? (
+                {user ? (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button size="icon-sm" className="focus-visible:ring-0">
                                 <Avatar>
-                                    <AvatarImage src={session.user.image || ""} alt={session.user.name || ""} />
-                                    <AvatarFallback>{session.user.name?.at(0) || "U"}</AvatarFallback>
+                                    <AvatarImage src={user.image || ""} alt={user.name || ""} />
+                                    <AvatarFallback>{user.name?.at(0) || "U"}</AvatarFallback>
                                 </Avatar>
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="mt-1" align="end">
                             <DropdownMenuLabel className="flex flex-col">
-                                <span className="font-medium">{session.user.name}</span>
-                                <span className="text-muted-foreground">@{session.user.email}</span>
+                                <span className="font-medium">{user.name}</span>
+                                <span className="text-muted-foreground">@{user.email}</span>
                             </DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
                                 className="justify-between text-muted-foreground"
-                                onClick={async () => {
-                                    "use server"
-                                    await signOut()
-                                }}
+                                onClick={async () => await authClient.signOut()}
                             >
                                 Log Out<LogOut />
                             </DropdownMenuItem>
@@ -86,10 +85,10 @@ export async function NavigationBar({ className, ...props }: React.ComponentProp
                                 <Button
                                     variant="outline"
                                     size="icon-sm"
-                                    onClick={async () => {
-                                        "use server"
-                                        await signIn("bangumi")
-                                    }}
+                                    onClick={async () => await authClient.signIn.oauth2({
+                                        providerId: "bangumi",
+                                        callbackURL: window.location.href
+                                    })}
                                 >
                                     <User />
                                 </Button>
