@@ -1,7 +1,7 @@
 import NextAuth from "next-auth"
 
 const bangumiUrl = process.env.NEXT_PUBLIC_BANGUMI_URL
-const apiUrl = process.env.API_URL
+const nextApiUrl = process.env.NEXT_API_URL
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [
@@ -10,11 +10,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             name: "Bangumi",
             type: "oauth",
             authorization: {
-                url: `${bangumiUrl}/oauth/authorize`,
+                url: `https://${bangumiUrl}/oauth/authorize`,
                 params: { scope: "" },
             },
             token: {
-                url: `${bangumiUrl}/oauth/access_token`,
+                url: `https://${bangumiUrl}/oauth/access_token`,
                 // Fix Bangumi returning null scope
                 async conform(response: Response) {
                     const body = await response.clone().json()
@@ -27,14 +27,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     })
                 },
             },
-            userinfo: `${apiUrl}/p1/me`,
+            userinfo: `https://${nextApiUrl}/p1/me`,
             clientId: process.env.AUTH_BANGUMI_ID,
             clientSecret: process.env.AUTH_BANGUMI_SECRET,
             profile(profile) {
                 return {
-                    id: profile.id.toString(),
+                    id: profile.id,
                     name: profile.nickname,
-                    image: profile.avatar?.medium,
+                    image: profile.avatar?.large,
+                    email: profile.username,
                 }
             },
         },

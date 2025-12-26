@@ -5,12 +5,13 @@ import { createClient, cacheExchange, fetchExchange } from "urql"
 import { registerUrql } from '@urql/next/rsc'
 
 import { auth } from "@/auth"
-import { Category, Character } from "@/lib/constants"
+import { Category, Character, Relation } from "@/lib/constants"
 
 const apiUrl = process.env.API_URL
+const nextApiUrl = process.env.NEXT_API_URL
 
 const makeClient = () => createClient({
-    url: `${process.env.NEXT_PUBLIC_API_URL}/v0/graphql`,
+    url: `https://${apiUrl}/v0/graphql`,
     exchanges: [cacheExchange, fetchExchange],
     preferGetMethod: false,
     fetch: async (input: RequestInfo | URL, init?: RequestInit) => {
@@ -35,6 +36,8 @@ function isCategoryID(value: number): value is keyof typeof CategoryFromID {
     return Object.keys(CategoryFromID).includes(String(value))
 }
 
+const relationValues = Object.values(Relation)
+
 type CharacterQueryResponse = {
     id: number
     infobox?: {
@@ -52,7 +55,7 @@ export async function search({
 }): Promise<SearchResponse> {
     const session = await auth()
 
-    const rawResult = await fetch(`${apiUrl}/p1/search/subjects?${new URLSearchParams(Object.fromEntries(Object.entries(params).map(([key, value]) => [key, String(value)])))}`, {
+    const rawResult = await fetch(`https://${nextApiUrl}/p1/search/subjects?${new URLSearchParams(Object.fromEntries(Object.entries(params).map(([key, value]) => [key, String(value)])))}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -66,11 +69,32 @@ export async function search({
     }
 
     const searchData: SearchResponse = await rawResult.json()
-    const subjects = searchData.data
+    searchData.data = searchData.data.map((subject) => ({
+        ...subject,
+        images: ((images) => {
+            const base = images?.large
+            if (!base) { return images }
 
-    if (!subjects || subjects.length === 0) {
-        return searchData
-    }
+            const scale = (size: number) => {
+                try {
+                    const url = new URL(base)
+                    return base.replace(url.origin, `${url.origin}/r/${size}`)
+                } catch {
+                    return base
+                }
+            }
+            return {
+                ...images,
+                medium: scale(800),
+                common: scale(400),
+                small: scale(200),
+                grid: scale(100)
+            }
+        })(subject.images)
+    }))
+
+    const subjects = searchData.data
+    if (!subjects || subjects.length === 0) { return searchData }
 
     try {
         const result = await getClient().query(`
@@ -82,7 +106,6 @@ export async function search({
                         airtime { date }
                         eps
                         volumes
-                        series
                         tags { name count }
                         characters(limit: 100) {
                             character {
@@ -92,6 +115,7 @@ export async function search({
                             }
                             type
                         }
+                        relations(includeTypes: [${relationValues.join(',')}]) { relation }
                     }
                 `).join('\n')}
             }
@@ -148,7 +172,7 @@ export async function search({
                 eps: (CategoryFromID[extra.type] === Category.Anime || CategoryFromID[extra.type] === Category.Real) ? extra.eps
                     : CategoryFromID[extra.type] === Category.Book ? extra.volumes || extra.eps
                         : undefined,
-                series: extra.series,
+                series: !extra.relations?.some(({ relation }) => relation === Relation.Series),
                 tags: (() => {
                     const yearPattern = /^\d{4}(年)?$/
                     const monthPattern = /^\d{4}年\d{1,2}月$/

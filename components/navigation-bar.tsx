@@ -1,6 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
-import { User } from "lucide-react"
+import { User, LogOut } from "lucide-react"
 import { SiGithub } from "react-icons/si"
 import { signIn, signOut, auth } from "@/auth"
 
@@ -14,6 +14,12 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 
 export async function NavigationBar({ className, ...props }: React.ComponentProps<'ul'>) {
@@ -31,7 +37,8 @@ export async function NavigationBar({ className, ...props }: React.ComponentProp
                     priority
                 />
                 <h1 className="text-xl font-bold leading-tight">
-                    Pick Anime Cool
+                    <span className="hidden sm:inline">Pick Anime Cool</span>
+                    <span className="inline sm:hidden">PickACG</span>
                 </h1>
             </li>
             <li /> {/* Placeholder */}
@@ -48,31 +55,50 @@ export async function NavigationBar({ className, ...props }: React.ComponentProp
                 {session?.user ? (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="icon-sm">
+                            <Button size="icon-sm" className="focus-visible:ring-0">
                                 <Avatar>
                                     <AvatarImage src={session.user.image || ""} alt={session.user.name || ""} />
                                     <AvatarFallback>{session.user.name?.at(0) || "U"}</AvatarFallback>
                                 </Avatar>
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" forceMount>
-                            <DropdownMenuLabel>{session.user.name}</DropdownMenuLabel>
+                        <DropdownMenuContent className="mt-1" align="end">
+                            <DropdownMenuLabel className="flex flex-col">
+                                <span className="font-medium">{session.user.name}</span>
+                                <span className="text-muted-foreground">@{session.user.email}</span>
+                            </DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={async () => {
-                                "use server"
-                                await signOut()
-                            }}>
-                                Log Out
+                            <DropdownMenuItem
+                                className="justify-between text-muted-foreground"
+                                onClick={async () => {
+                                    "use server"
+                                    await signOut()
+                                }}
+                            >
+                                Log Out<LogOut />
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 ) : (
-                    <Button variant="outline" size="icon-sm" onClick={async () => {
-                        "use server"
-                        await signIn("bangumi")
-                    }}>
-                        <User />
-                    </Button>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    size="icon-sm"
+                                    onClick={async () => {
+                                        "use server"
+                                        await signIn("bangumi")
+                                    }}
+                                >
+                                    <User />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent side="right">
+                                <span className="font-medium">Login</span>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                 )}
             </li>
         </ul>

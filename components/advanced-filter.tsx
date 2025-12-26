@@ -290,7 +290,7 @@ export function AdvancedFilter({
                                                         </span>
                                                     </div>
                                                 </time>
-                                                <Label className="capitalize hidden sm:block">{year}</Label>
+                                                <span className="capitalize hidden sm:block">{year}</span>
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
@@ -307,7 +307,7 @@ export function AdvancedFilter({
                                         <SelectContent className="w-[--radix-select-trigger-width] min-w-[--radix-select-trigger-width]">
                                             {seasonOptions.map((option) => (
                                                 <SelectItem key={option.value} value={option.value}>
-                                                    <option.icon /> <Label className="capitalize hidden sm:block">{option.label}</Label>
+                                                    <option.icon /> <span className="capitalize hidden sm:block">{option.label}</span>
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>

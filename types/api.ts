@@ -7,6 +7,13 @@ export type Subject = {
         total: number
         score: number
     }
+    images?: {
+        large: string
+        medium: string
+        common: string
+        small: string
+        grid: string
+    }
     nsfw: boolean
     type?: string
     date?: string
@@ -53,7 +60,7 @@ export type DetailResponse = {
         airtime: { date: string }
         eps: number
         volumes: number
-        series: boolean
+        relations: { relation: number }[]
         tags: {
             name: string
             count: number

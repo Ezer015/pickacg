@@ -31,3 +31,7 @@ export const Character = {
     Extra: 4,
     Narrator: 5,
 } as const
+
+export const Relation = {
+    Series: 1002,
+} as const

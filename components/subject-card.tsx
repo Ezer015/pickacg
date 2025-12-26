@@ -35,7 +35,6 @@ import { tagSchema } from "@/lib/search-params"
 import { Category } from "@/lib/constants"
 
 const bangumiUrl = process.env.NEXT_PUBLIC_BANGUMI_URL
-const apiUrl = process.env.NEXT_PUBLIC_API_URL
 
 const placeholderUrl = "https://lain.bgm.tv/img/no_icon_subject.png"
 
@@ -58,19 +57,19 @@ export function SubjectCard({
                         <Skeleton className="absolute inset-0 h-full w-full z-10" />
                     )}
                     <Link
-                        href={`${bangumiUrl}/subject/${subject.id}`}
+                        href={`https://${bangumiUrl}/subject/${subject.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="relative block h-full w-full"
                     >
                         <Image
-                            src={`${apiUrl}/v0/subjects/${subject.id}/image?type=common` || placeholderUrl}
+                            src={subject.images?.common || placeholderUrl}
                             alt={subject.nameCN || subject.name}
                             fill
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             className="object-cover"
                             onLoad={() => setIsLoading(false)}
-                            unoptimized={true}
+                            unoptimized
                         />
                     </Link>
                     <ul className="absolute top-2 px-2 w-full flex gap-1 items-start justify-between">
@@ -104,11 +103,11 @@ export function SubjectCard({
                                     <Tooltip>
                                         <TooltipTrigger asChild>
                                             <Link
-                                                href={`${bangumiUrl}/character/${character.id}`}
+                                                href={`https://${bangumiUrl}/character/${character.id}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="relative block"
-                                                style={{ zIndex: 10 - index }}
+                                                style={{ zIndex: 9 - index }}
                                             >
                                                 <Avatar className="ring-accent/75 ring-3">
                                                     <AvatarImage
