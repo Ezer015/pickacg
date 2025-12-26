@@ -4,6 +4,7 @@ import { SearchParam, SearchPayload, SearchResponse, DetailResponse } from "@/ty
 import { createClient, cacheExchange, fetchExchange } from "urql"
 import { registerUrql } from '@urql/next/rsc'
 
+import { auth } from "@/auth"
 import { Category, Character } from "@/lib/constants"
 
 const apiUrl = process.env.API_URL
@@ -12,6 +13,14 @@ const makeClient = () => createClient({
     url: `${process.env.NEXT_PUBLIC_API_URL}/v0/graphql`,
     exchanges: [cacheExchange, fetchExchange],
     preferGetMethod: false,
+    fetch: async (input: RequestInfo | URL, init?: RequestInit) => {
+        const session = await auth()
+        const headers = new Headers(init?.headers)
+        if (session?.accessToken) {
+            headers.set("Authorization", `Bearer ${session?.accessToken}`)
+        }
+        return fetch(input, { ...init, headers })
+    },
 })
 const { getClient } = registerUrql(makeClient)
 
@@ -41,9 +50,14 @@ export async function search({
     params: SearchParam
     payload: SearchPayload
 }): Promise<SearchResponse> {
+    const session = await auth()
+
     const rawResult = await fetch(`${apiUrl}/p1/search/subjects?${new URLSearchParams(Object.fromEntries(Object.entries(params).map(([key, value]) => [key, String(value)])))}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+            "Content-Type": "application/json",
+            ...(session?.accessToken ? { Authorization: `Bearer ${session?.accessToken}` } : {}),
+        },
         body: JSON.stringify(payload),
     })
 

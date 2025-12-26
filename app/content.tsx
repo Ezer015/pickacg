@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/empty"
 import { Skeleton } from "@/components/ui/skeleton"
 
-import { NavigationBar } from "@/components/navigation-bar"
 import { SearchBox } from "@/components/search-box"
 import { AdvancedFilter } from "@/components/advanced-filter"
 import { SubjectCard } from "@/components/subject-card"
@@ -146,87 +145,84 @@ export function HomeContent() {
     const reachedEnd = !isLoading && data && data.length && data.at(-1)!.total <= (data.length - 1) * pageLimit + data.at(-1)!.data.length
 
     return (
-        <div className="flex min-h-screen items-center justify-center font-sans">
-            <main className="flex min-h-screen w-full max-w-400 flex-col items-center gap-6 py-2 px-4 sm:py-6 sm:px-12 sm:items-start">
-                <NavigationBar />
-                <SearchBox isLoading={isLoading} />
-                <AdvancedFilter
-                    suggestedTags={suggestedTags.filter((tag) => tag && !(filters.category === Category.Anime
-                        ? /^\d{4}年(\d{1,2}月)?$/.test(tag)
-                        : /^\d{4}(年)?$/.test(tag)
-                    ))}
-                    isLoading={isLoading}
-                />
+        <>
+            <SearchBox isLoading={isLoading} />
+            <AdvancedFilter
+                suggestedTags={suggestedTags.filter((tag) => tag && !(filters.category === Category.Anime
+                    ? /^\d{4}年(\d{1,2}月)?$/.test(tag)
+                    : /^\d{4}(年)?$/.test(tag)
+                ))}
+                isLoading={isLoading}
+            />
 
-                <ItemGroup className="grid w-full gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                    {data?.flatMap((page) =>
-                        page.data
-                            // exclude mismatches by air date
-                            .filter((subject) => filters.airDate.enable && filters.airDate.mode === AirDateMode.Period
-                                ? (filters.category === Category.Anime
-                                    ? [`${filters.airDate.year}年${SeasonStart[filters.airDate.season ?? seasonValues[Math.floor(now.getMonth() / 3)]]}月`]
-                                    : [filters.airDate.year.toString(), `${filters.airDate.year}年`])
-                                    .includes(subject.tags?.find((tag) => filters.category === Category.Anime
-                                        ? /^\d{4}年\d{1,2}月$/.test(tag.name)
-                                        : /^\d{4}(年)?$/.test(tag.name))?.name ?? "")
-                                : subject)
-                            // exclude non-series books
-                            .filter((subject) => filters.category !== Category.Book || subject.series)
-                            .map((subject) => (<SubjectCard key={subject.id} subject={subject} />))
-                    )}
-                    {size > (data?.length ?? 0) && !reachedEnd && (
-                        <>{Array.from({ length: pageLimit }).map((_, index) => (
-                            <Item key={`skeleton-${index}`} variant="muted" className="flex-nowrap items-stretch sm:flex-wrap">
-                                <ItemHeader className="basis-auto sm:basis-full">
-                                    <Skeleton className="h-full w-auto sm:h-auto sm:w-full aspect-3/4 rounded-2xl" />
-                                </ItemHeader>
-                                <ItemContent>
-                                    <Skeleton className="h-6 w-1/2" />
-                                    <ItemSeparator className="my-1" />
-                                    <Skeleton className="h-4 w-2/3" />
-                                    <ul className="pt-2 flex w-full flex-wrap gap-2 items-center h-30 content-start overflow-hidden">
-                                        <li className="contents"><Skeleton className="h-[22px] w-12 rounded-full" /></li>
-                                        <li className="contents"><Skeleton className="h-[22px] w-24 rounded-full" /></li>
-                                        <li className="contents"><Skeleton className="h-[22px] w-12 rounded-full" /></li>
-                                        <li className="contents"><Skeleton className="h-[22px] w-18 rounded-full" /></li>
-                                        <li className="contents"><Skeleton className="h-[22px] w-36 rounded-full" /></li>
-                                        <li className="contents"><Skeleton className="h-[22px] w-12 rounded-full" /></li>
-                                        <li className="contents"><Skeleton className="h-[22px] w-24 rounded-full" /></li>
-                                        <li className="contents"><Skeleton className="h-[22px] w-12 rounded-full" /></li>
-                                        <li className="contents"><Skeleton className="h-[22px] w-18 rounded-full" /></li>
-                                        <li className="contents"><Skeleton className="h-[22px] w-36 rounded-full" /></li>
-                                    </ul>
-                                </ItemContent>
-                            </Item>
-                        ))}</>
-                    )}
-                </ItemGroup>
-                {!reachedEnd && size === (data?.length ?? 0) && <div ref={ref} />}
-                <Empty className="w-full">
-                    {reachedEnd && data.at(-1)?.total === 0 && (
-                        <EmptyHeader>
-                            <EmptyMedia variant="icon">
-                                <SearchSlash />
-                            </EmptyMedia>
-                            <EmptyTitle>No Results</EmptyTitle>
-                            <EmptyDescription>
-                                Try adjusting your search to pick stuff cool
-                            </EmptyDescription>
-                        </EmptyHeader>
-                    )}
-                    {error && (
-                        <EmptyHeader>
-                            <EmptyMedia variant="icon">
-                                <Ban />
-                            </EmptyMedia>
-                            <EmptyTitle>Error</EmptyTitle>
-                            <EmptyDescription>
-                                Unexpected error occurred while picking stuff cool
-                            </EmptyDescription>
-                        </EmptyHeader>
-                    )}
-                </Empty>
-            </main>
-        </div>
+            <ItemGroup className="grid w-full gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                {data?.flatMap((page) =>
+                    page.data
+                        // exclude mismatches by air date
+                        .filter((subject) => filters.airDate.enable && filters.airDate.mode === AirDateMode.Period
+                            ? (filters.category === Category.Anime
+                                ? [`${filters.airDate.year}年${SeasonStart[filters.airDate.season ?? seasonValues[Math.floor(now.getMonth() / 3)]]}月`]
+                                : [filters.airDate.year.toString(), `${filters.airDate.year}年`])
+                                .includes(subject.tags?.find((tag) => filters.category === Category.Anime
+                                    ? /^\d{4}年\d{1,2}月$/.test(tag.name)
+                                    : /^\d{4}(年)?$/.test(tag.name))?.name ?? "")
+                            : subject)
+                        // exclude non-series books
+                        .filter((subject) => filters.category !== Category.Book || subject.series)
+                        .map((subject) => (<SubjectCard key={subject.id} subject={subject} />))
+                )}
+                {size > (data?.length ?? 0) && !reachedEnd && (
+                    <>{Array.from({ length: pageLimit }).map((_, index) => (
+                        <Item key={`skeleton-${index}`} variant="muted" className="flex-nowrap items-stretch sm:flex-wrap">
+                            <ItemHeader className="basis-auto sm:basis-full">
+                                <Skeleton className="h-full w-auto sm:h-auto sm:w-full aspect-3/4 rounded-2xl" />
+                            </ItemHeader>
+                            <ItemContent>
+                                <Skeleton className="h-6 w-1/2" />
+                                <ItemSeparator className="my-1" />
+                                <Skeleton className="h-4 w-2/3" />
+                                <ul className="pt-2 flex w-full flex-wrap gap-2 items-center h-30 content-start overflow-hidden">
+                                    <li className="contents"><Skeleton className="h-[22px] w-12 rounded-full" /></li>
+                                    <li className="contents"><Skeleton className="h-[22px] w-24 rounded-full" /></li>
+                                    <li className="contents"><Skeleton className="h-[22px] w-12 rounded-full" /></li>
+                                    <li className="contents"><Skeleton className="h-[22px] w-18 rounded-full" /></li>
+                                    <li className="contents"><Skeleton className="h-[22px] w-36 rounded-full" /></li>
+                                    <li className="contents"><Skeleton className="h-[22px] w-12 rounded-full" /></li>
+                                    <li className="contents"><Skeleton className="h-[22px] w-24 rounded-full" /></li>
+                                    <li className="contents"><Skeleton className="h-[22px] w-12 rounded-full" /></li>
+                                    <li className="contents"><Skeleton className="h-[22px] w-18 rounded-full" /></li>
+                                    <li className="contents"><Skeleton className="h-[22px] w-36 rounded-full" /></li>
+                                </ul>
+                            </ItemContent>
+                        </Item>
+                    ))}</>
+                )}
+            </ItemGroup>
+            {!reachedEnd && size === (data?.length ?? 0) && <div ref={ref} />}
+            <Empty className="w-full">
+                {reachedEnd && data.at(-1)?.total === 0 && (
+                    <EmptyHeader>
+                        <EmptyMedia variant="icon">
+                            <SearchSlash />
+                        </EmptyMedia>
+                        <EmptyTitle>No Results</EmptyTitle>
+                        <EmptyDescription>
+                            Try adjusting your search to pick stuff cool
+                        </EmptyDescription>
+                    </EmptyHeader>
+                )}
+                {error && (
+                    <EmptyHeader>
+                        <EmptyMedia variant="icon">
+                            <Ban />
+                        </EmptyMedia>
+                        <EmptyTitle>Error</EmptyTitle>
+                        <EmptyDescription>
+                            Unexpected error occurred while picking stuff cool
+                        </EmptyDescription>
+                    </EmptyHeader>
+                )}
+            </Empty>
+        </>
     )
 }
