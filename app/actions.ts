@@ -16,19 +16,19 @@ const makeClient = () => createClient({
     exchanges: [cacheExchange, fetchExchange],
     preferGetMethod: false,
     fetch: async (input: RequestInfo | URL, init?: RequestInit) => {
-        const session = await auth.api.getSession({ headers: await headers() })
-        let accessToken: string | undefined
-        if (session) {
+        const accessToken = await (async () => {
             try {
-                const result = await auth.api.getAccessToken({
+                const { accessToken } = await auth.api.getAccessToken({
                     body: { providerId: "bangumi" },
                     headers: await headers()
                 })
-                accessToken = result.accessToken
-            } catch (e) {
-                console.warn("Failed to get access token for GraphQL client:", e)
+                return accessToken
+            } catch {
+                // Unauthorized Escape
+                return null
             }
-        }
+        })()
+
         return fetch(input, {
             ...init, headers: {
                 ...init?.headers,
@@ -67,19 +67,18 @@ export async function search({
     params: SearchParam
     payload: SearchPayload
 }): Promise<SearchResponse> {
-    const session = await auth.api.getSession({ headers: await headers() })
-    let accessToken: string | undefined
-    if (session) {
+    const accessToken = await (async () => {
         try {
-            const result = await auth.api.getAccessToken({
+            const { accessToken } = await auth.api.getAccessToken({
                 body: { providerId: "bangumi" },
                 headers: await headers()
             })
-            accessToken = result.accessToken
-        } catch (e) {
-            console.warn("Failed to get access token for search:", e)
+            return accessToken
+        } catch {
+            // Unauthorized Escape
+            return null
         }
-    }
+    })()
 
     const rawResult = await fetch(`https://${nextApiUrl}/p1/search/subjects?${new URLSearchParams(Object.fromEntries(Object.entries(params).map(([key, value]) => [key, String(value)])))}`, {
         method: "POST",
@@ -89,7 +88,6 @@ export async function search({
         },
         body: JSON.stringify(payload),
     })
-
     if (!rawResult.ok) {
         throw new Error("Failed to load subjects.")
     }
