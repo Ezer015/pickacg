@@ -32,22 +32,21 @@ export function NavigationBar({ className, ...props }: React.ComponentProps<'ul'
             <li className="flex items-center gap-3">
                 <Image
                     className="dark:invert"
-                    src="/pick-anime-cool.svg"
-                    alt="Pick Anime Cool logo"
+                    src="/pickacg.svg"
+                    alt="PickACG logo"
                     width={36}
                     height={36}
                     priority
                 />
                 <h1 className="text-xl font-bold leading-tight">
-                    <span className="hidden sm:inline">Pick Anime Cool</span>
-                    <span className="inline sm:hidden">PickACG</span>
+                    PickACG
                 </h1>
             </li>
             <li /> {/* Placeholder */}
             <li className="flex items-center gap-4">
                 <Button variant="outline" size="icon-sm" asChild>
                     <Link
-                        href="https://github.com/Ezer015/pick-anime-cool"
+                        href="https://github.com/Ezer015/pickacg/"
                         target="_blank"
                         rel="noreferrer"
                     >
@@ -87,7 +86,7 @@ export function NavigationBar({ className, ...props }: React.ComponentProps<'ul'
                                     size="icon-sm"
                                     onClick={async () => await authClient.signIn.oauth2({
                                         providerId: "bangumi",
-                                        callbackURL: window.location.href
+                                        callbackURL: window.location.href,
                                     })}
                                 >
                                     <User />

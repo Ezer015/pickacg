@@ -29,8 +29,8 @@ const notoSansJP = Noto_Sans_JP({
 })
 
 export const metadata: Metadata = {
-    title: "Pick Anime Cool",
-    description: "Provide a better bangumi search experience",
+    title: "PickACG",
+    description: "Provide a better Bangumi search experience",
 }
 
 export default function RootLayout({
