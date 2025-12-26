@@ -19,6 +19,7 @@ export const auth = betterAuth({
                     authorizationUrl: `https://${bangumiUrl}/oauth/authorize`,
                     tokenUrl: `https://${bangumiUrl}/oauth/access_token`,
                     redirectURI: `${betterAuthUrl}/api/auth/callback/bangumi`,
+                    accessType: "offline",
                     scopes: [],
                     getUserInfo: async (token) => {
                         const response = await fetch(`https://${nextApiUrl}/p1/me`, {
