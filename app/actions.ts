@@ -10,6 +10,17 @@ import { SearchParam, SearchPayload, SearchResponse, DetailResponse } from "@/ty
 
 const apiUrl = process.env.API_URL
 const nextApiUrl = process.env.NEXT_API_URL
+const userAgent = (() => {
+    const projectRepoUrl = process.env.PROJECT_REPO_URL
+    if (!projectRepoUrl) { return undefined }
+
+    try {
+        const repoPath = new URL(projectRepoUrl).pathname.replace(/^\//, "").replace(/\/$/, "")
+        return `${repoPath} (${projectRepoUrl})`
+    } catch {
+        return `project (${projectRepoUrl})`
+    }
+})()
 
 const makeClient = () => createClient({
     url: `https://${apiUrl}/v0/graphql`,
@@ -25,15 +36,17 @@ const makeClient = () => createClient({
                 return accessToken
             } catch {
                 // Unauthorized Escape
-                return null
+                return undefined
             }
         })()
 
         return fetch(input, {
-            ...init, headers: {
+            ...init,
+            headers: {
                 ...init?.headers,
-                ...(accessToken && { Authorization: `Bearer ${accessToken}` })
-            }
+                ...(userAgent && { "User-Agent": userAgent }),
+                ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+            },
         })
     },
 })
@@ -76,7 +89,7 @@ export async function search({
             return accessToken
         } catch {
             // Unauthorized Escape
-            return null
+            return undefined
         }
     })()
 
@@ -84,6 +97,7 @@ export async function search({
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            ...(userAgent && { "User-Agent": userAgent }),
             ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
         },
         body: JSON.stringify(payload),
