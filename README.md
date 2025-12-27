@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="public/pickacg.svg" alt="PickACG Logo" width="100" height="100">
+<img src="public/pickacg.svg" alt="PickACG Logo" width="20%">
 
 # PickACG
 
@@ -14,7 +14,7 @@
 
 ![Screenshot](./public/screenshot.png)
 
-[<img src="https://img.shields.io/badge/Try_Now-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Try Now" width="200">](https://pickacg.ezers.top/)
+[<img src="https://img.shields.io/badge/Try_Now-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Try Now" width="30%">](https://pickacg.ezers.top/)
 
 </div>
 
