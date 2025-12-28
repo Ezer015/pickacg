@@ -2,7 +2,7 @@ export type Subject = {
     id: number
     name: string
     nameCN: string
-    type?: string
+    type: string
     rating: {
         rank: number
         total: number

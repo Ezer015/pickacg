@@ -1,6 +1,6 @@
-import { betterAuth, OAuth2Tokens } from "better-auth";
-import { genericOAuth } from "better-auth/plugins";
-import { Pool } from '@neondatabase/serverless';
+import { betterAuth, OAuth2Tokens } from "better-auth"
+import { genericOAuth } from "better-auth/plugins"
+import { Pool } from '@neondatabase/serverless'
 
 const bangumiAuthId = process.env.BANGUMI_AUTH_ID
 const bangumiAuthSecret = process.env.BANGUMI_AUTH_SECRET
@@ -42,7 +42,7 @@ export const auth = betterAuth({
                             email: profile.username,
                             emailVerified: false,
                             image: profile.avatar?.large,
-                        };
+                        }
                     },
                 }] : [])
             ]

@@ -121,42 +121,47 @@ export async function search({
         }
     )
     if (!rawResult.ok) {
-        throw new Error("Failed to load subjects.", {
-            cause: rawResult
-        })
+        throw new Error("Failed to load subjects.")
     }
 
     const rawSearchData: SearchResponse | TrendingResponse = await rawResult.json()
     const searchData: SearchResponse = isTrending
         ? { ...rawSearchData, data: (rawSearchData as TrendingResponse).data.map(({ subject }) => subject) }
         : rawSearchData as SearchResponse
-    searchData.data = searchData.data.map((subject) => ({
-        ...subject,
-        images: ((images) => {
-            const base = images?.large
-            if (!base) { return images }
+    searchData.data = searchData.data.map((subject) => {
+        const typeId = parseInt(subject.type)
+        if (!isCategoryID(typeId)) {
+            throw new Error("Invalid subject type.", { cause: subject })
+        }
 
-            const scale = (size: number) => {
-                try {
-                    const url = new URL(base)
-                    return base.replace(url.origin, `${url.origin}/r/${size}`)
-                } catch {
-                    return base
+        return {
+            ...subject,
+            type: CategoryFromID[typeId],
+            images: ((images) => {
+                const base = images?.large
+                if (!base) { return images }
+
+                const scale = (size: number) => {
+                    try {
+                        const url = new URL(base)
+                        return base.replace(url.origin, `${url.origin}/r/${size}`)
+                    } catch {
+                        return base
+                    }
                 }
-            }
-            return {
-                ...images,
-                medium: scale(800),
-                common: scale(400),
-                small: scale(200),
-                grid: scale(100)
-            }
-        })(subject.images)
-    }))
+                return {
+                    ...images,
+                    medium: scale(800),
+                    common: scale(400),
+                    small: scale(200),
+                    grid: scale(100)
+                }
+            })(subject.images)
+        }
+    })
 
     const subjects = searchData.data
     if (!subjects || subjects.length === 0) { return searchData }
-    console.log(subjects)
 
     try {
         const result = await getClient().query(`
@@ -164,7 +169,6 @@ export async function search({
                 ${subjects.map(({ id }) => `
                     subject${id}: subject(id: ${id}) {
                         id
-                        type
                         airtime { date }
                         eps
                         volumes
@@ -225,14 +229,13 @@ export async function search({
 
         const subjectDetails = subjects.map((subject) => {
             const extra = detailData[`subject${subject.id}`]
-            if (!extra || !isCategoryID(extra.type)) { return subject }
+            if (!extra) { return subject }
 
             return {
                 ...subject,
-                type: CategoryFromID[extra.type],
                 date: extra.airtime?.date !== "1899-11-30" ? extra.airtime?.date : undefined,
-                eps: (CategoryFromID[extra.type] === Category.Anime || CategoryFromID[extra.type] === Category.Real) ? extra.eps
-                    : CategoryFromID[extra.type] === Category.Book ? extra.volumes || extra.eps
+                eps: (subject.type === Category.Anime || subject.type === Category.Real) ? extra.eps
+                    : subject.type === Category.Book ? extra.volumes || extra.eps
                         : undefined,
                 series: !extra.relations?.some(({ relation }) => relation === Relation.Series),
                 tags: (() => {
