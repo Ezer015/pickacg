@@ -169,6 +169,17 @@ export function AdvancedFilter({
 
     const [isOpen, setIsOpen] = React.useState(false)
 
+    const [previewRating, setPreviewRating] = React.useState({
+        min: filters.rating.min,
+        max: filters.rating.max,
+    })
+    React.useEffect(() => {
+        setPreviewRating({
+            min: filters.rating.min,
+            max: filters.rating.max,
+        })
+    }, [filters.rating.min, filters.rating.max])
+
     return (
         <Collapsible
             open={isOpen}
@@ -379,18 +390,19 @@ export function AdvancedFilter({
                     </li>
                     <li className="flex w-full max-w-3xs items-center gap-2 ml-2">
                         <Label className="text-xs text-muted-foreground tabular-nums">
-                            {filters.rating.min.toFixed(1)}
+                            {previewRating.min.toFixed(1)}
                         </Label>
                         <Slider
-                            value={[filters.rating.min, filters.rating.max]}
-                            onValueChange={(value) => setFilters({ rating: { ...filters.rating, min: value[0], max: value[1] } })}
+                            value={[previewRating.min, previewRating.max]}
+                            onValueChange={(value) => setPreviewRating({ min: value[0], max: value[1] })}
+                            onValueCommit={(value) => setFilters({ rating: { ...filters.rating, min: value[0], max: value[1] } })}
                             min={0}
                             max={9}
                             step={1}
                             disabled={!filters.rating.enable}
                         />
                         <Label className="text-xs text-muted-foreground tabular-nums">
-                            {filters.rating.max.toFixed(1)}
+                            {previewRating.max.toFixed(1)}
                         </Label>
                     </li>
                 </ul>
