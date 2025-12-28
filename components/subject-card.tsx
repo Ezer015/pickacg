@@ -38,6 +38,12 @@ const bangumiUrl = process.env.NEXT_PUBLIC_BANGUMI_URL
 
 const placeholderUrl = "https://lain.bgm.tv/img/no_icon_subject.png"
 
+const AllowState = {
+    Wait: 0,
+    Preview: 1,
+    Click: 2,
+} as const
+
 export function SubjectCard({
     className,
     subject,
@@ -48,7 +54,7 @@ export function SubjectCard({
     const [category] = useQueryState('category', parseAsStringLiteral(Object.values(Category)).withDefault(Category.Anime))
 
     const [isLoading, setIsLoading] = React.useState(true)
-    const [isPreviewing, setIsPreviewing] = React.useState<boolean>(false)
+    const allowState = React.useRef<typeof AllowState[keyof typeof AllowState]>(AllowState.Wait)
 
     return (
         <Item key={subject.id} variant="muted" className={cn("flex-nowrap items-stretch sm:flex-wrap", className)} {...props}>
@@ -107,17 +113,24 @@ export function SubjectCard({
                                                 href={`https://${bangumiUrl}/character/${character.id}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="relative block"
+                                                className="relative block touch-manipulation"
                                                 style={{ zIndex: 9 - index }}
                                                 onPointerDown={(e) => {
                                                     if (e.pointerType === 'touch' && document.activeElement !== e.currentTarget) {
-                                                        setIsPreviewing(true)
+                                                        allowState.current = AllowState.Preview
                                                     }
                                                 }}
                                                 onClick={(e) => {
-                                                    if (isPreviewing) {
-                                                        e.preventDefault()
-                                                        setIsPreviewing(false)
+                                                    switch (allowState.current) {
+                                                        case AllowState.Preview:
+                                                            e.preventDefault()
+                                                            allowState.current = AllowState.Click
+                                                            break
+                                                        case AllowState.Wait:
+                                                            e.preventDefault()
+                                                        case AllowState.Click:
+                                                            allowState.current = AllowState.Wait
+                                                            e.currentTarget.blur()
                                                     }
                                                 }}
                                             >
