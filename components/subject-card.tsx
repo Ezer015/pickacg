@@ -48,6 +48,7 @@ export function SubjectCard({
     const [category] = useQueryState('category', parseAsStringLiteral(Object.values(Category)).withDefault(Category.Anime))
 
     const [isLoading, setIsLoading] = React.useState(true)
+    const [touchedCharacter, setTouchedCharacter] = React.useState<number | null>(null)
 
     return (
         <Item key={subject.id} variant="muted" className={cn("flex-nowrap items-stretch sm:flex-wrap", className)} {...props}>
@@ -108,6 +109,18 @@ export function SubjectCard({
                                                 rel="noopener noreferrer"
                                                 className="relative block"
                                                 style={{ zIndex: 9 - index }}
+                                                onPointerDown={(e) => {
+                                                    if (e.pointerType === 'touch' && document.activeElement !== e.currentTarget) {
+                                                        setTouchedCharacter(character.id)
+                                                    }
+                                                }}
+                                                onClick={(e) => {
+                                                    if (touchedCharacter === character.id) {
+                                                        e.preventDefault()
+                                                        setTouchedCharacter(null)
+                                                    }
+                                                }}
+                                                onBlur={() => setTouchedCharacter(null)}
                                             >
                                                 <Avatar className="ring-accent/75 ring-3">
                                                     <AvatarImage
