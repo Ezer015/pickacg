@@ -17,6 +17,14 @@ const eslintConfig = defineConfig([
     rules: {
       "curly": ["warn", "all"],
       "eol-last": ["warn", "always"],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          "argsIgnorePattern": "^_",
+          "varsIgnorePattern": "^_",
+          "caughtErrorsIgnorePattern": "^_"
+        }
+      ]
     },
   },
 ]);
