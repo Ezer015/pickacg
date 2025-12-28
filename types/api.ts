@@ -2,11 +2,13 @@ export type Subject = {
     id: number
     name: string
     nameCN: string
+    type?: string
     rating: {
         rank: number
         total: number
         score: number
     }
+    nsfw: boolean
     images?: {
         large: string
         medium: string
@@ -14,8 +16,6 @@ export type Subject = {
         small: string
         grid: string
     }
-    nsfw: boolean
-    type?: string
     date?: string
     eps?: number
     series?: boolean
@@ -33,6 +33,14 @@ export type Subject = {
 
 export type SearchResponse = {
     data: Subject[]
+    total: number
+}
+
+export type TrendingResponse = {
+    data: {
+        subject: Subject
+        count: number
+    }[]
     total: number
 }
 

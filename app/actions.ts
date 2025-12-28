@@ -6,7 +6,7 @@ import { registerUrql } from '@urql/next/rsc'
 
 import { auth } from "@/lib/auth"
 import { Category, Character, Relation } from "@/lib/constants"
-import { SearchParam, SearchPayload, SearchResponse, DetailResponse } from "@/types/api"
+import { SearchParam, SearchPayload, SearchResponse, TrendingResponse, DetailResponse } from "@/types/api"
 
 const apiUrl = process.env.API_URL
 const nextApiUrl = process.env.NEXT_API_URL
@@ -60,7 +60,7 @@ const CategoryFromID = {
     6: Category.Real
 } as const
 function isCategoryID(value: number): value is keyof typeof CategoryFromID {
-    return Object.keys(CategoryFromID).includes(String(value))
+    return Object.keys(CategoryFromID).includes(value.toString())
 }
 
 const relationValues = Object.values(Relation)
@@ -93,20 +93,43 @@ export async function search({
         }
     })()
 
-    const rawResult = await fetch(`https://${nextApiUrl}/p1/search/subjects?${new URLSearchParams(Object.fromEntries(Object.entries(params).map(([key, value]) => [key, String(value)])))}`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            ...(userAgent && { "User-Agent": userAgent }),
-            ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
-        },
-        body: JSON.stringify(payload),
-    })
+    const isTrending = payload.sort === "heat" &&
+        payload.keyword === "" &&
+        payload.filter.type.length === 1 &&
+        (() => {
+            const { type: _, ...rest } = payload.filter
+            return Object.keys(rest).length === 0
+        })()
+    const searchParams = Object.fromEntries(
+        Object.entries(params).map(([key, value]) => [key, value.toString()])
+    )
+    const rawResult = await fetch(
+        isTrending
+            ? `https://${nextApiUrl}/p1/trending/subjects?${new URLSearchParams({
+                type: payload.filter.type[0].toString(),
+                ...searchParams
+            })}`
+            : `https://${nextApiUrl}/p1/search/subjects?${new URLSearchParams(searchParams)}`,
+        {
+            method: isTrending ? "GET" : "POST",
+            headers: {
+                "Content-Type": "application/json",
+                ...(userAgent && { "User-Agent": userAgent }),
+                ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+            },
+            ...(!isTrending && { body: JSON.stringify(payload) }),
+        }
+    )
     if (!rawResult.ok) {
-        throw new Error("Failed to load subjects.")
+        throw new Error("Failed to load subjects.", {
+            cause: rawResult
+        })
     }
 
-    const searchData: SearchResponse = await rawResult.json()
+    const rawSearchData: SearchResponse | TrendingResponse = await rawResult.json()
+    const searchData: SearchResponse = isTrending
+        ? { ...rawSearchData, data: (rawSearchData as TrendingResponse).data.map(({ subject }) => subject) }
+        : rawSearchData as SearchResponse
     searchData.data = searchData.data.map((subject) => ({
         ...subject,
         images: ((images) => {
@@ -133,6 +156,7 @@ export async function search({
 
     const subjects = searchData.data
     if (!subjects || subjects.length === 0) { return searchData }
+    console.log(subjects)
 
     try {
         const result = await getClient().query(`
