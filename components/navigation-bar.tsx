@@ -28,7 +28,8 @@ import { cn } from "@/lib/utils"
 import { activityOf } from "@/app/actions"
 
 export function NavigationBar({ className, ...props }: React.ComponentProps<'ul'>) {
-    const user = authClient.useSession().data?.user
+    const { data: session, isPending } = authClient.useSession()
+    const user = session?.user
 
     const { data, isLoading, error } = useSWR(
         user?.email ? ['activity', user.email] as const : null,
@@ -114,6 +115,7 @@ export function NavigationBar({ className, ...props }: React.ComponentProps<'ul'
                                         providerId: "bangumi",
                                         callbackURL: window.location.href,
                                     })}
+                                    disabled={isPending}
                                 >
                                     <User />
                                 </Button>
