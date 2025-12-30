@@ -3,10 +3,12 @@
 import { headers } from "next/headers"
 import { createClient, cacheExchange, fetchExchange } from "urql"
 import { registerUrql } from '@urql/next/rsc'
+import { format, subDays, eachDayOfInterval, fromUnixTime, getUnixTime } from 'date-fns'
+import { toZonedTime } from 'date-fns-tz'
 
 import { auth } from "@/lib/auth"
 import { Category, Character, Relation } from "@/lib/constants"
-import { SearchParam, SearchPayload, SearchResponse, TrendingResponse, DetailResponse } from "@/types/api"
+import { SearchParam, SearchPayload, SearchResponse, TrendingResponse, DetailResponse, TimelineEntry, TimelineResponse } from "@/types/api"
 
 const apiUrl = process.env.API_URL
 const nextApiUrl = process.env.NEXT_API_URL
@@ -60,7 +62,7 @@ const CategoryFromID = {
     6: Category.Real
 } as const
 function isCategoryID(value: number): value is keyof typeof CategoryFromID {
-    return Object.keys(CategoryFromID).includes(value.toString())
+    return value in CategoryFromID
 }
 
 const relationValues = Object.values(Relation)
@@ -275,4 +277,52 @@ export async function search({
         console.error("Subject Detail Query Error:", e)
         return searchData
     }
+}
+
+const days = 7
+const activityLimit = 20
+const timeZone = "Asia/Shanghai"
+
+export async function activityOf(identifier: string): Promise<Record<string, number>> {
+    const now = new Date()
+
+    const startTime = getUnixTime(subDays(now, days))
+    const fetchTimeline = async (
+        remain: number,
+        until?: number,
+    ): Promise<TimelineEntry[]> => {
+        if (remain <= 0) { return [] }
+
+        const response = await fetch(
+            `https://${nextApiUrl}/p1/users/${identifier}/timeline?${new URLSearchParams({
+                limit: activityLimit.toString(),
+                ...(until && { until: until.toString() }),
+            })}`,
+            { headers: { ...(userAgent && { "User-Agent": userAgent }) } }
+        )
+        if (!response.ok) { return [] }
+
+        const data: TimelineResponse = (await response.json()).filter(({ createdAt }: TimelineEntry) => createdAt > startTime)
+
+        const timeline = data.filter(({ memo }) => memo?.progress)
+        return [
+            ...timeline,
+            ...await fetchTimeline(data.length === activityLimit && timeline.length ? remain - 1 : 0, timeline.at(-1)?.id),
+        ]
+    }
+
+    const formattedDate = (date: Date) => format(toZonedTime(date, timeZone), 'yyyy-MM-dd')
+    return (await fetchTimeline(3)).reduce((acc, { createdAt }) => {
+        const dateStr = formattedDate(fromUnixTime(createdAt))
+        if (dateStr in acc) { acc[dateStr]++ }
+
+        return acc
+    }, Object.fromEntries(
+        eachDayOfInterval({
+            start: subDays(now, days - 1),
+            end: now,
+        })
+            .map(formattedDate)
+            .map((key) => [key, 0])
+    ))
 }

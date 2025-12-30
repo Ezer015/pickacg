@@ -90,3 +90,11 @@ export type DetailResponse = {
         }[]
     }
 }
+
+export type TimelineEntry = {
+    id: number
+    createdAt: number
+    memo: { progress?: unknown }
+}
+
+export type TimelineResponse = TimelineEntry[]
