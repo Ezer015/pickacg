@@ -22,7 +22,7 @@ import { Kbd } from "@/components/ui/kbd"
 import { Spinner } from "@/components/ui/spinner"
 
 import { cn } from "@/lib/utils"
-import { AirDateMode, Category } from "@/lib/constants"
+import { AirDateMode, Category, Sort } from "@/lib/constants"
 import { airDateSchema } from "@/lib/search-params"
 import { type Option } from "@/types/option"
 
@@ -56,6 +56,7 @@ const categoryOptions: Option[] = [
     }
 ] as const
 
+const sortValues = Object.values(Sort)
 
 export function SearchBox({
     className,
@@ -69,6 +70,7 @@ export function SearchBox({
         query: parseAsString.withDefault(''),
         category: parseAsStringLiteral(categoryValues).withDefault(Category.Anime),
         airDate: parseAsJson(airDateSchema),
+        sort: parseAsStringLiteral(sortValues).withDefault(Sort.Heat),
     })
 
     const [queryInput, setQueryInput] = React.useState(filters.query)
@@ -83,7 +85,10 @@ export function SearchBox({
             role="search"
             onSubmit={(e) => {
                 e.preventDefault()
-                setFilters({ query: queryInput })
+                setFilters({
+                    query: queryInput.trim(),
+                    ...(queryInput.trim() && { sort: Sort.Match })
+                })
             }}
             {...props}
         >

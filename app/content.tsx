@@ -59,7 +59,7 @@ export function HomeContent() {
     const [filters] = useQueryStates({
         query: parseAsString.withDefault(''),
         category: parseAsStringLiteral(categoryValues).withDefault(Category.Anime),
-        sort: parseAsStringLiteral(sortValues).withDefault(Sort.Match),
+        sort: parseAsStringLiteral(sortValues).withDefault(Sort.Heat),
 
         airDate: parseAsJson(airDateSchema).withDefault({
             enable: false,
