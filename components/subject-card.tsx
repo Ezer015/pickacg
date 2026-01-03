@@ -116,7 +116,9 @@ export function SubjectCard({
                                                 className="relative block touch-manipulation"
                                                 style={{ zIndex: 9 - index }}
                                                 onPointerDown={(e) => {
-                                                    if (e.pointerType === 'touch' && document.activeElement !== e.currentTarget) {
+                                                    if (e.pointerType !== 'touch') {
+                                                        allowState.current = AllowState.Click
+                                                    } else if (document.activeElement !== e.currentTarget) {
                                                         allowState.current = AllowState.Preview
                                                     }
                                                 }}
