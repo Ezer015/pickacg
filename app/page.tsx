@@ -137,7 +137,7 @@ export default function Home() {
             .sort(([, countA], [, countB]) => countB - countA)
             .slice(0, 10)
             .map(([name]) => name)
-    }, [firstPage])
+    }, [firstPage, filters.category])
 
     const reachedEnd = !isLoading && data && data.length && data.at(-1)!.total <= (data.length - 1) * pageLimit + data.at(-1)!.data.length
 

@@ -36,7 +36,7 @@ export function NavigationBar({ className, ...props }: React.ComponentProps<'ul'
     const { data, isLoading, error } = useSWR(
         user?.email ? ['activity', user.email] as const : null,
         ([, identifier]) => activityOf(identifier)
-    );
+    )
     const activities = Object.entries(data || {}).sort(([a], [b]) => a.localeCompare(b))
     const activeDays = activities.map(([, count]) => count).filter((count: number) => count > 0).sort((a: number, b: number) => a - b)
 
@@ -61,7 +61,7 @@ export function NavigationBar({ className, ...props }: React.ComponentProps<'ul'
             <li className="flex items-center gap-4">
                 <Button variant="outline" size="icon-sm" asChild>
                     <Link
-                        href={projectRepoUrl ?? "https://github.com/Ezer015/pickacg/"}
+                        href={projectRepoUrl ?? "https://github.com/Ezer015/pickacg"}
                         target="_blank"
                         rel="noreferrer"
                     >

@@ -249,7 +249,7 @@ export async function search({
                         if (yearPattern.test(name)) { return 'year' }
                         if (monthPattern.test(name)) { return 'month' }
                         return 'other'
-                    });
+                    })
 
                     const getMostPopular = (tags?: typeof extra.tags) =>
                         tags && tags.length > 0 ? tags.reduce((prev, curr) => curr.count > prev.count ? curr : prev) : null
