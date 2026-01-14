@@ -210,26 +210,26 @@ export function SubjectCard({
                 <ul className="pt-2 flex w-full flex-wrap gap-2 items-center h-30 content-start overflow-hidden">
                     {(subject.tags ?? [])
                         // filter out tags that are too long
-                        .filter((tag) => tag.name && tag.name.length < 16)
+                        .filter(({ name }) => name && name.length < 16)
                         // filter out tags that are too common
-                        .filter((tag) => !(category === Category.Anime && ["TV", "日本"].includes(tag.name)))
+                        .filter(({ name }) => !(category === Category.Anime && ["TV", "日本"].includes(name)))
                         // filter out air date tags
-                        .filter((tag) => !(category === Category.Anime
-                            ? /^\d{4}年(\d{1,2}月)?$/.test(tag.name)
-                            : /^\d{4}(年)?$/.test(tag.name)
+                        .filter(({ name }) => !(category === Category.Anime
+                            ? /^\d{4}年(\d{1,2}月)?$/.test(name)
+                            : /^\d{4}(年)?$/.test(name)
                         ))
                         // sort by count
                         .sort((a, b) => b.count - a.count)
-                        .map((tag) => (
-                            <li key={tag.name} className="contents">
-                                <Badge variant={tagFilter.enable && tagFilter.tags.includes(tag.name) ? "default" : "secondary"}>
-                                    {tag.name}
-                                    {!tagFilter.tags.includes(tag.name) && (
+                        .map(({ name }) => (
+                            <li key={name} className="contents">
+                                <Badge variant={tagFilter.enable && tagFilter.tags.includes(name) ? "default" : "secondary"}>
+                                    {name}
+                                    {!tagFilter.tags.includes(name) && (
                                         <Button
                                             variant="ghost"
                                             size="icon-6xs"
                                             className="rounded-full text-muted-foreground hover:text-foreground"
-                                            onClick={() => setTagFilter({ ...tagFilter, tags: [...tagFilter.tags, tag.name] })}
+                                            onClick={() => setTagFilter({ ...tagFilter, tags: [...tagFilter.tags, name] })}
                                         >
                                             <Plus />
                                         </Button>

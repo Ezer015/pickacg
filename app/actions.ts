@@ -244,21 +244,23 @@ export async function search({
                     const yearPattern = /^\d{4}(年)?$/
                     const monthPattern = /^\d{4}年\d{1,2}月$/
 
-                    const yearTags = extra.tags?.filter(t => yearPattern.test(t.name)) || []
-                    const monthTags = extra.tags?.filter(t => monthPattern.test(t.name)) || []
+                    // Group tags by type and find the most popular in each group
+                    const tagGroups = Object.groupBy(extra.tags, ({ name }) => {
+                        if (yearPattern.test(name)) { return 'year' }
+                        if (monthPattern.test(name)) { return 'month' }
+                        return 'other'
+                    });
 
-                    const maxYearTag = yearTags.length > 0 ? yearTags.reduce((prev, curr) => (curr.count > prev.count ? curr : prev)) : null
-                    const maxMonthTag = monthTags.length > 0 ? monthTags.reduce((prev, curr) => (curr.count > prev.count ? curr : prev)) : null
+                    const getMostPopular = (tags?: typeof extra.tags) =>
+                        tags && tags.length > 0 ? tags.reduce((prev, curr) => curr.count > prev.count ? curr : prev) : null
 
-                    return extra.tags?.filter(tag => {
-                        if (yearPattern.test(tag.name)) {
-                            return tag === maxYearTag
-                        }
-                        if (monthPattern.test(tag.name)) {
-                            return tag === maxMonthTag
-                        }
-                        return true
-                    })
+                    const topYearTag = getMostPopular(tagGroups.year)
+                    const topMonthTag = getMostPopular(tagGroups.month)
+                    return [
+                        ...(topYearTag ? [topYearTag] : []),
+                        ...(topMonthTag ? [topMonthTag] : []),
+                        ...(tagGroups.other ?? [])
+                    ]
                 })(),
                 characters: extra.characters
                     .filter((c) => c.type === Character.Main)

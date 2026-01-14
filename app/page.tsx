@@ -138,8 +138,10 @@ export default function Home() {
                 .flatMap((subject) => subject.tags ?? [])
                 .reduce((acc, tag) => acc.set(tag.name, (acc.get(tag.name) || 0) + tag.count), new Map<string, number>()))
             // filter out tags that are too long
-            .filter((tag) => tag && tag[0].length < 16)
-            .sort((a, b) => b[1] - a[1])
+            .filter(([name]) => name && name.length < 16)
+            // filter out tags that are too common
+            .filter(([name]) => !(filters.category === Category.Anime && ["TV", "日本"].includes(name)))
+            .sort(([, countA], [, countB]) => countB - countA)
             .slice(0, 10)
             .map(([name]) => name)
     }, [firstPage])
