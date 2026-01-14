@@ -146,7 +146,7 @@ export async function search({
                 const scale = (size: number) => {
                     try {
                         const url = new URL(base)
-                        return base.replace(url.origin, `${url.origin}/r/${size}`)
+                        return base.replace(url.host, `${url.host}/r/${size}`)
                     } catch {
                         return base
                     }
