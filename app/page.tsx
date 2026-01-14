@@ -6,13 +6,7 @@ import { SearchSlash, Ban } from "lucide-react"
 import { useInView } from "react-intersection-observer"
 import { useQueryStates, parseAsJson, parseAsString, parseAsStringLiteral } from "nuqs"
 
-import {
-    Item,
-    ItemContent,
-    ItemGroup,
-    ItemHeader,
-    ItemSeparator,
-} from "@/components/ui/item"
+import { ItemGroup } from "@/components/ui/item"
 import {
     Empty,
     EmptyDescription,
@@ -20,7 +14,6 @@ import {
     EmptyMedia,
     EmptyTitle,
 } from "@/components/ui/empty"
-import { Skeleton } from "@/components/ui/skeleton"
 
 import { NavigationBar } from "@/components/navigation-bar"
 import { SearchBox } from "@/components/search-box"

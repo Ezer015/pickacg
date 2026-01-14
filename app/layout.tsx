@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono, Noto_Sans_SC, Noto_Sans_JP } from "next/font/google"
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
+import { Suspense } from "react"
 import { Analytics } from '@vercel/analytics/next'
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
@@ -48,7 +49,7 @@ export default function RootLayout({
                         enableSystem
                         disableTransitionOnChange
                     >
-                        {children}
+                        <Suspense>{children}</Suspense>
                         <Toaster />
                     </ThemeProvider>
                 </NuqsAdapter>
