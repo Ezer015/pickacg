@@ -40,18 +40,20 @@ export function NavigationBar({ className, ...props }: React.ComponentProps<'ul'
 
     return (
         <ul className={cn("sticky top-0 z-20 flex w-full items-center bg-background/90 backdrop-blur px-6 py-3 justify-between", className)} {...props}>
-            <li className="flex items-center gap-3">
-                <Image
-                    className="dark:invert"
-                    src="/pickacg.svg"
-                    alt="PickACG logo"
-                    width={36}
-                    height={36}
-                    priority
-                />
-                <h1 className="text-xl font-bold leading-tight">
-                    PickACG
-                </h1>
+            <li className="contents">
+                <Link href="/" className="flex items-center gap-3">
+                    <Image
+                        className="dark:invert"
+                        src="/pickacg.svg"
+                        alt="PickACG logo"
+                        width={36}
+                        height={36}
+                        priority
+                    />
+                    <h1 className="text-xl font-bold leading-tight">
+                        PickACG
+                    </h1>
+                </Link>
             </li>
             <li /> {/* Placeholder */}
             <li className="flex items-center gap-4">
