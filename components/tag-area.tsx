@@ -110,7 +110,7 @@ export function TagArea({
                         </Tooltip>
                     </TooltipProvider>
 
-                    <PopoverContent className="w-fit p-2 flex flex-col gap-3" align="start" side="bottom" sideOffset={10}>
+                    <PopoverContent className="w-fit p-4 flex flex-col gap-4" align="start" side="bottom" sideOffset={10}>
                         <form onSubmit={handleSubmit} className="flex gap-2">
                             <InputGroup className="flex-1">
                                 <InputGroupInput
