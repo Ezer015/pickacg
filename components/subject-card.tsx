@@ -79,7 +79,7 @@ export function SubjectCard({
                             unoptimized
                         />
                     </Link>
-                    <ul className="absolute top-2 px-2 w-full flex gap-1 items-start justify-between">
+                    <ul className="absolute top-2 px-2 w-full flex gap-1 items-start justify-between min-h-5.5">
                         <li>
                             {subject.rating.rank > 0 && (
                                 <Badge variant="secondary" className="bg-accent/60 backdrop-blur-xs font-semibold hidden sm:block">
@@ -156,7 +156,7 @@ export function SubjectCard({
                             ))}
                         </li>
                         <li className="contents">
-                            <ul className="flex gap-1 items-start justify-between">
+                            <ul className="flex gap-1 items-start justify-between min-h-5.5">
                                 <li>
                                     {subject.date && (
                                         <Badge variant="secondary" className="bg-accent/60 backdrop-blur-xs font-medium">
