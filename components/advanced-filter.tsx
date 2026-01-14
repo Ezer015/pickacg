@@ -162,7 +162,7 @@ export function AdvancedFilter({
             max: 8,
         }),
         tags: parseAsJson(tagSchema).withDefault({
-            enable: false,
+            enable: true,
             tags: [],
         }),
     })

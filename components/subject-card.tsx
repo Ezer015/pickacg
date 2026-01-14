@@ -50,7 +50,7 @@ export function SubjectCard({
     ...props
 }: React.ComponentProps<typeof Item> & { subject: Subject }) {
     // Sync states with URL query parameters
-    const [tagFilter, setTagFilter] = useQueryState('tags', parseAsJson(tagSchema).withDefault({ enable: false, tags: [] }))
+    const [tagFilter, setTagFilter] = useQueryState('tags', parseAsJson(tagSchema).withDefault({ enable: true, tags: [] }))
     const [category] = useQueryState('category', parseAsStringLiteral(Object.values(Category)).withDefault(Category.Anime))
 
     const [isLoading, setIsLoading] = React.useState(true)

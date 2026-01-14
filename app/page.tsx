@@ -76,7 +76,7 @@ export default function Home() {
         }),
 
         tags: parseAsJson(tagSchema).withDefault({
-            enable: false,
+            enable: true,
             tags: [],
         }),
     })
