@@ -27,6 +27,8 @@ import { authClient } from "@/lib/auth-client"
 import { cn } from "@/lib/utils"
 import { activityOf } from "@/app/actions"
 
+const projectRepoUrl = process.env.PROJECT_REPO_URL
+
 export function NavigationBar({ className, ...props }: React.ComponentProps<'ul'>) {
     const { data: session, isPending } = authClient.useSession()
     const user = session?.user
@@ -59,7 +61,7 @@ export function NavigationBar({ className, ...props }: React.ComponentProps<'ul'
             <li className="flex items-center gap-4">
                 <Button variant="outline" size="icon-sm" asChild>
                     <Link
-                        href="https://github.com/Ezer015/pickacg/"
+                        href={projectRepoUrl ?? "https://github.com/Ezer015/pickacg/"}
                         target="_blank"
                         rel="noreferrer"
                     >
